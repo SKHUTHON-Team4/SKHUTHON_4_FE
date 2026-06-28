@@ -25,7 +25,7 @@ export default function Feed() {
   }, [tab]);
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-50 pb-20 page-enter">
       <header className="bg-white px-5 pt-10 pb-0 sticky top-0 z-10">
         <h1 className="text-xl font-bold mb-3">커뮤니티</h1>
         <div className="flex gap-4 border-b border-gray-100">

@@ -34,7 +34,7 @@ export default function Profile() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-50 pb-20 page-enter">
       <header className="bg-white px-5 pt-10 pb-6">
         <h1 className="text-xl font-bold mb-4">마이</h1>
         <div className="flex items-center gap-4">

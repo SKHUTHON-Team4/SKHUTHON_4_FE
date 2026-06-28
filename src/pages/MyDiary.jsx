@@ -44,7 +44,7 @@ export default function MyDiary() {
   };
 
   return (
-    <div className="min-h-screen bg-white pb-20">
+    <div className="min-h-screen bg-white pb-20 page-enter">
       <header className="px-5 pt-10 pb-4">
         <h1 className="text-xl font-bold">기록</h1>
       </header>
