@@ -17,6 +17,13 @@ export default function MyDiary() {
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [diaries, setDiaries] = useState([]);
 
+  // 오늘 날짜 (로컬 기준)
+  const today = new Date();
+  const isToday = (day) =>
+    today.getFullYear() === year &&
+    today.getMonth() + 1 === month &&
+    today.getDate() === day;
+
   useEffect(() => {
     getMyDiaries(year, month).then((res) => setDiaries(res.data)).catch(() => {});
   }, [year, month]);
@@ -65,7 +72,13 @@ export default function MyDiary() {
               onClick={() => diary && navigate(`/diary/${diary.id}`)}
               className="flex flex-col items-center py-1"
             >
-              <span className={`text-sm ${diary ? 'font-bold text-primary' : 'text-gray-600'}`}>{day}</span>
+              <span
+                className={`text-sm w-8 h-8 flex items-center justify-center rounded-full ${
+                  isToday(day) ? 'bg-primary text-white font-bold' : 'text-gray-600'
+                }`}
+              >
+                {day}
+              </span>
               {diary?.emotion != null && (
                 <img src={EMOTION_IMAGE[diary.emotion]} alt="" className="w-6 h-6 object-contain mt-0.5" />
               )}
@@ -75,8 +88,13 @@ export default function MyDiary() {
       </div>
 
       {/* Diary list below */}
-      <div className="mt-6 px-4">
-        <p className="text-sm font-semibold mb-3">전체 일기</p>
+            <div className="mt-6 px-4">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-sm font-semibold">전체 일기</p>
+                <button onClick={() => navigate('/my/all')} className="text-xs text-primary font-medium">
+                  전체 보기 ›
+                </button>
+              </div>  
         {diaries.length === 0 ? (
           <p className="text-gray-400 text-sm text-center py-6">이 달의 일기가 없어요.</p>
         ) : (
@@ -97,6 +115,13 @@ export default function MyDiary() {
           ))
         )}
       </div>
+
+      <button
+        onClick={() => navigate('/write')}
+        className="fixed right-6 bottom-24 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-3xl text-white shadow-xl"
+      >
+        +
+      </button>
 
       <BottomNav />
     </div>

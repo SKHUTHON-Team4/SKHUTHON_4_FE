@@ -50,6 +50,12 @@ export default function Feed() {
           diaries.map((d) => <DiaryCard key={d.id} diary={d} />)
         )}
       </div>
+      <button
+        onClick={() => navigate('/write')}
+        className="fixed right-6 bottom-24 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-3xl text-white shadow-xl"
+      >
+        +
+      </button>
 
       <BottomNav />
     </div>
