@@ -54,3 +54,10 @@ export const toggleEmpathy = (diaryId) => api.post(`/api/diaries/${diaryId}/empa
 // ── Report ────────────────────────────────────────
 export const report = (targetId, reportType, reason) =>
   api.post('/api/reports', { targetId, reportType, reason });
+
+// ── Notification ──────────────────────────────
+export const getNotifications = () => api.get('/api/notifications');
+export const getUnreadCount = () => api.get('/api/notifications/unread-count');
+export const readAllNotifications = () => api.patch('/api/notifications/read-all');
+export const toggleNightNotification = () => api.patch('/api/members/me/notification/night');
+export const toggleMorningNotification = () => api.patch('/api/members/me/notification/morning');

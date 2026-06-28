@@ -26,108 +26,25 @@ export default function App() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      getMe()
-        .then((res) => setUser(res.data))
-        .catch(() => {});
+      getMe().then((res) => setUser(res.data)).catch(() => {});
     }
-  }, [setUser]);
+  }, []);
 
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/oauth/callback" element={<OAuthCallback />} />
-
-        <Route
-          path="/onboarding"
-          element={
-            <PrivateRoute>
-              <Onboarding />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/home"
-          element={
-            <PrivateRoute>
-              <Home />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/feed"
-          element={
-            <PrivateRoute>
-              <Feed />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/write"
-          element={
-            <PrivateRoute>
-              <Write />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/diary/:id/edit"
-          element={
-            <PrivateRoute>
-              <Write />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/diary/:id"
-          element={
-            <PrivateRoute>
-              <DiaryDetail />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/my"
-          element={
-            <PrivateRoute>
-              <MyDiary />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/my/all"
-          element={
-            <PrivateRoute>
-              <MyDiaryAll />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/profile"
-          element={
-            <PrivateRoute>
-              <Profile />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/notifications"
-          element={
-            <PrivateRoute>
-              <Notifications />
-            </PrivateRoute>
-          }
-        />
-
+        <Route path="/onboarding" element={<PrivateRoute><Onboarding /></PrivateRoute>} />
+        <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
+        <Route path="/feed" element={<PrivateRoute><Feed /></PrivateRoute>} />
+        <Route path="/write" element={<PrivateRoute><Write /></PrivateRoute>} />
+        <Route path="/diary/:id/edit" element={<PrivateRoute><Write /></PrivateRoute>} />
+        <Route path="/diary/:id" element={<PrivateRoute><DiaryDetail /></PrivateRoute>} />
+        <Route path="/my" element={<PrivateRoute><MyDiary /></PrivateRoute>} />
+        <Route path="/my/all" element={<PrivateRoute><MyDiaryAll /></PrivateRoute>} />
+        <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+        <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
