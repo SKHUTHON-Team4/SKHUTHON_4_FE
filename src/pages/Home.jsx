@@ -50,8 +50,16 @@ export default function Home() {
             </p>
           </div>
 
-          <button className="text-[24px] leading-none" aria-label="알림">
-            ♡
+          <button
+            onClick={() => navigate('/notifications')}
+            className="flex h-10 w-10 items-center justify-center"
+            aria-label="알림"
+          >
+            <img
+              src="/assets/bell.png"
+              alt="알림"
+              className="h-7 w-7 object-contain"
+            />
           </button>
         </header>
 
@@ -75,11 +83,36 @@ export default function Home() {
           </div>
 
           <div className="mt-3 flex h-3 w-full overflow-hidden rounded-full bg-gray-100">
-            <div style={{ width: `${mood?.ratio100 || 0}%`, background: '#7C5CFC' }} />
-            <div style={{ width: `${mood?.ratio75 || 0}%`, background: '#9B7FFF' }} />
-            <div style={{ width: `${mood?.ratio50 || 0}%`, background: '#C4B5FD' }} />
-            <div style={{ width: `${mood?.ratio25 || 0}%`, background: '#FCA5A5' }} />
-            <div style={{ width: `${mood?.ratio0 || 0}%`, background: '#EF4444' }} />
+            <div
+              style={{
+                width: `${mood?.ratio100 || 0}%`,
+                background: '#7C5CFC',
+              }}
+            />
+            <div
+              style={{
+                width: `${mood?.ratio75 || 0}%`,
+                background: '#9B7FFF',
+              }}
+            />
+            <div
+              style={{
+                width: `${mood?.ratio50 || 0}%`,
+                background: '#C4B5FD',
+              }}
+            />
+            <div
+              style={{
+                width: `${mood?.ratio25 || 0}%`,
+                background: '#FCA5A5',
+              }}
+            />
+            <div
+              style={{
+                width: `${mood?.ratio0 || 0}%`,
+                background: '#EF4444',
+              }}
+            />
           </div>
         </div>
       </div>
