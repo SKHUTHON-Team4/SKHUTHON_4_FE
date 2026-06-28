@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getFeed, getHotFeed } from '../api';
 import DiaryCard from '../components/diary/DiaryCard';
 import BottomNav from '../components/common/BottomNav';
@@ -6,6 +7,7 @@ import BottomNav from '../components/common/BottomNav';
 const TABS = ['최신', '추천', '핫'];
 
 export default function Feed() {
+  const navigate = useNavigate();
   const [tab, setTab] = useState(0);
   const [diaries, setDiaries] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -50,6 +52,7 @@ export default function Feed() {
           diaries.map((d) => <DiaryCard key={d.id} diary={d} />)
         )}
       </div>
+
       <button
         onClick={() => navigate('/write')}
         className="fixed right-6 bottom-24 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-3xl text-white shadow-xl"
