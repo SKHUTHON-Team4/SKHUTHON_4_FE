@@ -33,7 +33,7 @@ export default function Home() {
         {/* 헤더 */}
         <header className="flex items-start justify-between">
           <div>
-            <p className="text-[20px] font-extrabold text-slate-800">안녕하세요, 👋</p>
+            <p className="text-[20px] font-extrabold text-slate-800">안녕하세요 👋</p>
             <h1 className="mt-1 text-[22px] font-extrabold text-slate-900">
               오늘의 감정을 기록해볼까요?
             </h1>

@@ -180,10 +180,12 @@ export default function Write() {
             <button
               type="button"
               onClick={() => setIsPublic(false)}
-              className={`h-7 w-7 rounded-full ${
+              className={`flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold text-white ${
                 !isPublic ? 'bg-primary' : 'bg-gray-200'
               }`}
-            />
+            >
+              ✓
+            </button>
           </div>
 
           <div className="mt-5 rounded-xl bg-[#F8F2FF] px-4 py-4">
@@ -210,9 +212,7 @@ export default function Write() {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="rounded-full bg-primary px-3 py-1 text-[12px] font-bold text-white">
-                AI 문구
-              </span>
+              
 
               <button
                 type="button"

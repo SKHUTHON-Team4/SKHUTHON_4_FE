@@ -35,6 +35,7 @@ export const getDiary = (id) => api.get(`/api/diaries/${id}`);
 export const updateDiary = (id, body) => api.patch(`/api/diaries/${id}`, body);
 export const deleteDiary = (id) => api.delete(`/api/diaries/${id}`);
 export const getFeed = (sort = 'latest') => api.get(`/api/diaries/feed?sort=${sort}`);
+export const getRecommendFeed = () => api.get('/api/diaries/feed/recommend');
 export const getHotFeed = () => api.get('/api/diaries/hot');
 export const getMyDiaries = (year, month, visibility = 'all') =>
   api.get(`/api/diaries/me?year=${year}&month=${month}&visibility=${visibility}`);

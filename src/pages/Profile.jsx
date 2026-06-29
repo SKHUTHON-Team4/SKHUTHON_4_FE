@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getProfile, toggleNightNotification, toggleMorningNotification, logout } from '../api';
+import { Check, Pencil, X } from 'lucide-react';
+import {
+  getProfile,
+  toggleNightNotification,
+  toggleMorningNotification,
+  logout,
+  updateNickname,
+} from '../api';
 import useAuthStore from '../store/authStore';
 import BottomNav from '../components/common/BottomNav';
 
@@ -8,6 +15,10 @@ export default function Profile() {
   const navigate = useNavigate();
   const logoutStore = useAuthStore((s) => s.logout);
   const [profile, setProfile] = useState(null);
+  const [isEditingNickname, setIsEditingNickname] = useState(false);
+  const [nicknameInput, setNicknameInput] = useState('');
+  const [nicknameError, setNicknameError] = useState('');
+  const [savingNickname, setSavingNickname] = useState(false);
 
   useEffect(() => {
     getProfile().then((res) => setProfile(res.data)).catch(() => {});
@@ -21,6 +32,49 @@ export default function Profile() {
   const handleMorningNotification = async () => {
     await toggleMorningNotification().catch(() => {});
     setProfile((prev) => ({ ...prev, notificationMorning: !prev.notificationMorning }));
+  };
+
+  const handleEditNickname = () => {
+    setNicknameInput(profile.nickname || '');
+    setNicknameError('');
+    setIsEditingNickname(true);
+  };
+
+  const handleCancelNickname = () => {
+    setNicknameInput('');
+    setNicknameError('');
+    setIsEditingNickname(false);
+  };
+
+  const handleSaveNickname = async () => {
+    const nextNickname = nicknameInput.trim();
+
+    if (!nextNickname) {
+      setNicknameError('닉네임을 입력해주세요.');
+      return;
+    }
+
+    if (nextNickname.length > 10) {
+      setNicknameError('닉네임은 10자 이하로 입력해주세요.');
+      return;
+    }
+
+    if (nextNickname === profile.nickname) {
+      handleCancelNickname();
+      return;
+    }
+
+    try {
+      setSavingNickname(true);
+      await updateNickname(nextNickname);
+      setProfile((prev) => ({ ...prev, nickname: nextNickname }));
+      setIsEditingNickname(false);
+      setNicknameError('');
+    } catch {
+      setNicknameError('닉네임 변경 중 오류가 발생했습니다.');
+    } finally {
+      setSavingNickname(false);
+    }
   };
 
   const handleLogout = async () => {
@@ -41,8 +95,66 @@ export default function Profile() {
           <div className="w-14 h-14 rounded-full bg-primary-light flex items-center justify-center text-2xl font-bold text-primary">
             {profile.nickname?.[0]}
           </div>
-          <div>
-            <p className="font-bold">{profile.nickname}</p>
+          <div className="min-w-0 flex-1">
+            {isEditingNickname ? (
+              <div>
+                <div className="flex items-center gap-2">
+                  <input
+                    value={nicknameInput}
+                    onChange={(e) => {
+                      setNicknameInput(e.target.value);
+                      setNicknameError('');
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleSaveNickname();
+                      if (e.key === 'Escape') handleCancelNickname();
+                    }}
+                    maxLength={10}
+                    autoFocus
+                    className="h-9 min-w-0 flex-1 rounded-lg border border-gray-200 px-3 text-sm font-bold outline-none focus:border-primary"
+                    placeholder="닉네임"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSaveNickname}
+                    disabled={savingNickname}
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-white disabled:opacity-50"
+                    aria-label="닉네임 저장"
+                  >
+                    <Check size={18} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCancelNickname}
+                    disabled={savingNickname}
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-500 disabled:opacity-50"
+                    aria-label="닉네임 수정 취소"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+                <div className="mt-1 flex items-center justify-between gap-2">
+                  {nicknameError ? (
+                    <p className="text-xs text-red-400">{nicknameError}</p>
+                  ) : (
+                    <p className="text-xs text-gray-400">10자 이하로 입력해주세요</p>
+                  )}
+                  <span className="shrink-0 text-xs text-gray-400">{nicknameInput.length}/10</span>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <p className="truncate font-bold">{profile.nickname}</p>
+                <button
+                  type="button"
+                  onClick={handleEditNickname}
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-gray-400 active:bg-gray-100"
+                  aria-label="닉네임 수정"
+                >
+                  <Pencil size={15} />
+                </button>
+              </div>
+            )}
             <p className="text-xs text-gray-400">{profile.email}</p>
           </div>
         </div>
