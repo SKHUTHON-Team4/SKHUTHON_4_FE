@@ -8,10 +8,10 @@ export default function OAuthCallback() {
   const { login, setUser } = useAuthStore();
 
   useEffect(() => {
-    const token = new URLSearchParams(window.location.search).get('token');
-    if (!token) { navigate('/'); return; }
+    const accessToken = new URLSearchParams(window.location.search).get('token');
+    if (!accessToken) { navigate('/'); return; }
 
-    login(token);
+    login(accessToken);
     getMe().then((res) => {
       setUser(res.data);
       const { nickname, age } = res.data;

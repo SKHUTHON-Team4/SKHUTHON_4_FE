@@ -6,14 +6,44 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  const accessToken = localStorage.getItem('accessToken') || localStorage.getItem('token');
+  if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
   return config;
 });
 
 api.interceptors.response.use(
   (res) => res.data,
-  (err) => Promise.reject(err)
+  async (err) => {
+    const originalRequest = err.config;
+
+    if (err.response?.status === 401 && originalRequest && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        const expiredToken = localStorage.getItem('accessToken') || localStorage.getItem('token');
+        if (!expiredToken) return Promise.reject(err);
+
+        const res = await axios.post('https://gksruf.store/api/auth/refresh', null, {
+          headers: { Authorization: `Bearer ${expiredToken}` },
+        });
+        const newAccessToken = res.data?.data?.accessToken;
+
+        if (!newAccessToken) return Promise.reject(err);
+
+        localStorage.setItem('accessToken', newAccessToken);
+        localStorage.removeItem('token');
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+        return api.request(originalRequest);
+      } catch (refreshErr) {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('token');
+        return Promise.reject(refreshErr);
+      }
+    }
+
+    return Promise.reject(err);
+  }
 );
 
 export default api;

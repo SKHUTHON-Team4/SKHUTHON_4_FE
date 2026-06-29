@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createDiary, updateEmotion, updateDiary, getDiary } from '../api';
 import EmotionModal from '../components/diary/EmotionModal';
@@ -17,6 +17,7 @@ export default function Write() {
   const { id } = useParams();          // id 있으면 수정 모드
   const isEdit = Boolean(id);
   const user = useAuthStore((s) => s.user);
+  const contentRef = useRef(null);
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -38,6 +39,13 @@ export default function Write() {
       }).catch(() => {});
     }
   }, [id]);
+
+  useEffect(() => {
+    if (!contentRef.current) return;
+
+    contentRef.current.style.height = '124px';
+    contentRef.current.style.height = `${Math.max(contentRef.current.scrollHeight, 124)}px`;
+  }, [content]);
 
   const handleSubmit = async () => {
     if (!title.trim()) return setError('제목을 입력해주세요.');
@@ -121,7 +129,8 @@ export default function Write() {
 
         <div className="rounded-[18px] border border-gray-200 bg-white px-5 py-5 shadow-sm">
           <textarea
-            className="h-[250px] w-full resize-none bg-transparent text-[15px] leading-relaxed text-gray-700 outline-none placeholder:text-gray-400"
+            ref={contentRef}
+            className="min-h-[124px] w-full resize-none overflow-hidden bg-transparent text-[15px] leading-relaxed text-gray-700 outline-none placeholder:text-gray-400"
             placeholder="최소 100자 이상 입력해주세요.."
             maxLength={500}
             value={content}

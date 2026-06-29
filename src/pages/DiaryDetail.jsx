@@ -94,8 +94,8 @@ export default function DiaryDetail() {
   return (
     <div className="min-h-screen bg-white flex flex-col pb-40">
       <header className="flex items-center justify-between px-5 pt-10 pb-4">
-        <button onClick={() => navigate(-1)} className="text-gray-400 text-sm">
-          ← 뒤로
+        <button onClick={() => navigate(-1)} className="text-gray-500 text-3xl font-black leading-none">
+          ‹
         </button>
 
         {!isMine && (

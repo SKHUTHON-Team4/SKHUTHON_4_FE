@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Bell } from 'lucide-react';
 import { getTodayMood } from '../api';
 import { EMOTION_IMAGE } from '../utils/emotion';
 import BottomNav from '../components/common/BottomNav';
@@ -49,7 +50,7 @@ export default function Home() {
             className="flex h-10 w-10 items-center justify-center"
             aria-label="알림"
           >
-            <img src="/assets/bell.png" alt="알림" className="h-7 w-7 object-contain" />
+            <Bell size={28} strokeWidth={2.5} className="text-slate-700" />
           </button>
         </header>
 

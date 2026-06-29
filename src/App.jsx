@@ -24,8 +24,8 @@ export default function App() {
   const setUser = useAuthStore((s) => s.setUser);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
+    const accessToken = localStorage.getItem('accessToken') || localStorage.getItem('token');
+    if (accessToken) {
       getMe().then((res) => setUser(res.data)).catch(() => {});
     }
   }, []);

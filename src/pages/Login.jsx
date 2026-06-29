@@ -5,25 +5,40 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-[#FAF8FF] px-8 py-14">
+    <div
+      className="relative min-h-screen flex flex-col justify-between overflow-hidden bg-[#FAF8FF] px-8 py-14"
+      style={{
+        backgroundImage: 'url(/assets/background.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center top',
+      }}
+    >
+      <div className="pointer-events-none absolute right-[16%] top-[41%] z-0 h-40 w-44 rounded-full bg-[#D9CBFF]/90 blur-2xl" />
+
       {/* 상단 */}
-      <div className="pt-10">
-        <h1 className="text-5xl font-black tracking-tight text-primary">
+      <div className="relative z-10 flex flex-col items-center pt-20 text-center sm:pt-10">
+        <p className="text-sm font-extrabold text-primary">
+          청춘을 잇는 감정 기록
+        </p>
+
+        <h1 className="mt-2 text-5xl font-black tracking-tight text-gray-900">
           청춘잇다
         </h1>
 
-        <p className="mt-6 text-[17px] leading-8 text-gray-500">
-          오늘의 감정을 기록하고,
-          <br />
-          나만의 공간을 시작해보세요.
-        </p>
+        <div className="mt-8 flex items-center justify-center">
+          <img
+            src="/assets/bear-face.png"
+            alt="청춘잇다 캐릭터 얼굴"
+            className="h-52 w-52 object-contain drop-shadow-[0_14px_24px_rgba(124,92,252,0.2)]"
+          />
+        </div>
       </div>
 
       {/* 하단 */}
-      <div>
+      <div className="relative z-10 flex flex-col items-center">
         <button
           onClick={handleKakaoLogin}
-          className="w-full rounded-2xl bg-[#FEE500] py-4 text-[17px] font-bold text-[#191919] shadow-sm transition hover:brightness-95"
+          className="w-full max-w-[360px] rounded-2xl bg-[#FEE500] py-4 text-[17px] font-bold text-[#191919] shadow-sm transition hover:brightness-95"
         >
           카카오로 시작하기
         </button>

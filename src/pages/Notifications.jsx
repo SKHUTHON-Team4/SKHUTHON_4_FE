@@ -19,8 +19,8 @@ export default function Notifications() {
   return (
     <div className="min-h-screen bg-white px-5 pt-10">
       <header className="flex items-center justify-between mb-8">
-        <button onClick={() => navigate(-1)} className="text-gray-400 text-sm">
-          ← 뒤로
+        <button onClick={() => navigate(-1)} className="w-10 text-left text-3xl font-black leading-none text-gray-500">
+          ‹
         </button>
         <h1 className="text-lg font-bold">알림</h1>
         <div className="w-10" />
