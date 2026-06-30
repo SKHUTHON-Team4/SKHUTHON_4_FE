@@ -96,7 +96,7 @@ export default function MyDiary() {
                 </button>
               </div>  
         {diaries.length === 0 ? (
-          <p className="text-gray-400 text-sm text-center py-6">이 달의 일기가 없어요.</p>
+          <p className="text-gray-400 text-sm text-center py-6">이 달의 일기가 없어요</p>
         ) : (
           diaries.map((d) => (
             <div

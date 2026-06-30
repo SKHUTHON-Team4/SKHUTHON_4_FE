@@ -127,7 +127,7 @@ export default function Write() {
           <textarea
             ref={contentRef}
             className="min-h-[124px] w-full resize-none overflow-hidden bg-transparent text-[15px] leading-relaxed text-gray-700 outline-none placeholder:text-gray-400"
-            placeholder="최소 100자 이상 입력해주세요.."
+            placeholder="최소 100자 이상 입력해주세요"
             maxLength={500}
             value={content}
             onChange={(e) => setContent(e.target.value)}
