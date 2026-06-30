@@ -122,7 +122,7 @@ export default function Write() {
             onChange={(e) => setTitle(e.target.value)}
           />
 
-          <span className="ml-3 flex items-center rounded-full bg-[#F1EAFE] px-3 py-1 text-[13px] font-bold text-primary">
+          <span className="ml-3 flex items-center rounded-full bg-[#F1EAFE] px-3 py-1 text-[13px] font-bold text-primary whitespace-nowrap shrink-0 max-w-[120px] truncate">
             {user?.nickname || '청춘'}
           </span>
         </div>
