@@ -113,16 +113,16 @@ export default function Write() {
       </section>
 
       <section className="mt-8 space-y-4">
-        <div className="flex items-center rounded-[18px] border border-gray-200 bg-white px-5 py-4 shadow-sm">
+        <div className="flex items-center gap-2">
           <input
-            className="flex-1 bg-transparent text-[16px] outline-none placeholder:text-gray-400"
+            className="flex-1 rounded-[18px] border border-gray-200 bg-white px-5 py-4 text-[16px] outline-none placeholder:text-gray-400 shadow-sm"
             placeholder="제목을 입력해주세요"
             maxLength={50}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
 
-          <span className="ml-3 flex items-center rounded-full bg-[#F1EAFE] px-3 py-1 text-[13px] font-bold text-primary whitespace-nowrap shrink-0 max-w-[120px] truncate">
+          <span className="flex items-center rounded-full bg-[#F1EAFE] px-4 py-2 text-[13px] font-bold text-primary whitespace-nowrap shrink-0 max-w-[120px] truncate shadow-sm">
             {user?.nickname || '청춘'}
           </span>
         </div>
