@@ -44,7 +44,6 @@ export default function DiaryDetail() {
     if (!vv) return;
 
     const handleResize = () => {
-      // 레이아웃 뷰포트 높이 - 실제 보이는 뷰포트 높이 = 키보드가 차지한 높이
       const offset = window.innerHeight - vv.height - vv.offsetTop;
       setKeyboardOffset(offset > 0 ? offset : 0);
     };
@@ -119,7 +118,7 @@ export default function DiaryDetail() {
     <div className="min-h-screen bg-white flex flex-col pb-40">
       <header className="flex items-center justify-between px-5 pt-10 pb-4">
         <button onClick={() => navigate(-1)} className="flex items-center text-gray-600">
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
