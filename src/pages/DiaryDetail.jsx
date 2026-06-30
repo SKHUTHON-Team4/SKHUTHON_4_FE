@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   getDiary,
@@ -28,11 +28,35 @@ export default function DiaryDetail() {
   const [showReport, setShowReport] = useState(false);
   const [reportTarget, setReportTarget] = useState(null);
 
+  // 키보드 높이만큼 입력창을 띄우기 위한 offset
+  const [keyboardOffset, setKeyboardOffset] = useState(0);
+  const inputRef = useRef(null);
+
   useEffect(() => {
     getDiary(id).then((r) => setDiary(r.data));
     getComments(id).then((r) => setComments(r.data));
     getEmpathy(id).then((r) => setEmpathy(r.data));
   }, [id]);
+
+  // visualViewport로 키보드 높이 감지
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+
+    const handleResize = () => {
+      // 레이아웃 뷰포트 높이 - 실제 보이는 뷰포트 높이 = 키보드가 차지한 높이
+      const offset = window.innerHeight - vv.height - vv.offsetTop;
+      setKeyboardOffset(offset > 0 ? offset : 0);
+    };
+
+    vv.addEventListener("resize", handleResize);
+    vv.addEventListener("scroll", handleResize);
+
+    return () => {
+      vv.removeEventListener("resize", handleResize);
+      vv.removeEventListener("scroll", handleResize);
+    };
+  }, []);
 
   const handleEmpathy = () => toggleEmpathy(id).then((r) => setEmpathy(r.data));
 
@@ -191,9 +215,13 @@ export default function DiaryDetail() {
         ))}
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-3 flex gap-2">
+      <div
+        className="fixed left-0 right-0 bg-white border-t border-gray-100 px-4 py-3 flex gap-2 transition-[bottom] duration-100"
+        style={{ bottom: keyboardOffset }}
+      >
         <input
-          className="flex-1 border border-gray-200 rounded-full px-4 py-2 text-sm outline-none"
+          ref={inputRef}
+          className="flex-1 border border-gray-200 rounded-full px-4 py-2 text-base outline-none"
           placeholder="댓글을 입력하세요 (최대 200자)"
           maxLength={200}
           value={commentText}
