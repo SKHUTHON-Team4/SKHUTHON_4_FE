@@ -1,7 +1,8 @@
 export default function Login() {
   const handleKakaoLogin = () => {
-    window.location.href =
-      'https://gksruf.store/oauth2/authorization/kakao';
+    window.location.href = import.meta.env.DEV
+      ? '/oauth2/authorization/kakao'
+      : 'https://gksruf.store/oauth2/authorization/kakao';
   };
 
   return (

@@ -85,63 +85,71 @@ export default function Feed() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-24 page-enter">
-      <header className="sticky top-0 z-30 border-b border-gray-100 bg-white/95 backdrop-blur">
-        <div className="mx-auto w-full max-w-[1300px] px-6 pt-12">
+      <header className="z-30">
+        <div className="mx-auto w-full max-w-[1180px] px-5 pt-10 sm:px-6">
           <div className="flex items-start justify-between gap-3">
             {isSearching ? (
-              <div className="flex h-11 flex-1 items-center gap-2 rounded-full bg-gray-50 px-4">
-                <Search size={18} className="shrink-0 text-gray-400" />
+              <div className="flex w-full items-center gap-2">
+                <div className="flex h-10 flex-1 items-center gap-2 rounded-2xl bg-white px-4 shadow-sm ring-1 ring-gray-100">
+                  <Search size={18} className="shrink-0 text-gray-400" />
 
-                <input
-                  value={keyword}
-                  onChange={(e) => setKeyword(e.target.value)}
-                  autoFocus
-                  placeholder="게시글 검색"
-                  className="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
-                />
+                  <input
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                    autoFocus
+                    placeholder="게시글 검색"
+                    className="w-full bg-transparent text-sm font-medium text-gray-700 outline-none placeholder:text-gray-400"
+                  />
 
-                {keyword && (
-                  <button
-                    type="button"
-                    onClick={() => setKeyword('')}
-                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-gray-400 active:bg-gray-100"
-                    aria-label="검색어 지우기"
-                  >
-                    <X size={16} />
-                  </button>
-                )}
+                  {keyword && (
+                    <button
+                      type="button"
+                      onClick={() => setKeyword('')}
+                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-400 active:bg-gray-200"
+                      aria-label="검색어 지우기"
+                    >
+                      <X size={15} />
+                    </button>
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={closeSearch}
+                  className="h-10 shrink-0 px-2 text-sm font-bold text-gray-500 active:text-gray-700"
+                >
+                  취소
+                </button>
               </div>
             ) : (
-              <h1 className="text-[22px] font-extrabold text-slate-900">
+              <h1 className="text-xl font-bold text-gray-800">
                 커뮤니티
               </h1>
             )}
 
-            <button
-              type="button"
-              onClick={() => (isSearching ? closeSearch() : setIsSearching(true))}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-slate-700 active:bg-gray-100"
-              aria-label={isSearching ? '검색 닫기' : '검색 열기'}
-            >
-              {isSearching ? (
-                <X size={24} strokeWidth={2.5} />
-              ) : (
+            {!isSearching && (
+              <button
+                type="button"
+                onClick={() => setIsSearching(true)}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-slate-700 active:bg-gray-100"
+                aria-label="검색 열기"
+              >
                 <Search size={24} strokeWidth={2.5} />
-              )}
-            </button>
+              </button>
+            )}
           </div>
 
           {!isSearching && (
-            <div className="mt-5 flex gap-4 border-b border-gray-100">
+            <div className="mt-5 flex gap-2">
               {TABS.map((t, i) => (
                 <button
                   key={t}
                   type="button"
                   onClick={() => setTab(i)}
-                  className={`-mb-px border-b-2 pb-2 text-[14px] font-semibold transition-colors ${
+                  className={`rounded-full px-4 py-2 text-sm font-bold transition-colors ${
                     tab === i
-                      ? 'border-primary text-primary'
-                      : 'border-transparent text-gray-400'
+                      ? 'bg-primary text-white'
+                      : 'bg-gray-100 text-gray-500'
                   }`}
                 >
                   {t}
@@ -152,11 +160,11 @@ export default function Feed() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-[1300px] px-6 pt-5">
+      <main className="mx-auto w-full max-w-[1180px] px-5 pt-4 sm:px-6">
         {loading ? (
-          <p className="py-10 text-center text-gray-400">불러오는 중...</p>
+          <p className="py-10 text-center text-sm text-gray-400">불러오는 중...</p>
         ) : diaries.length === 0 ? (
-          <p className="py-10 text-center text-gray-400">
+          <p className="py-10 text-center text-sm text-gray-400">
             {isSearching && keyword.trim()
               ? '검색 결과가 없어요.'
               : emptyMessage || '아직 게시글이 없어요.'}
@@ -169,7 +177,7 @@ export default function Feed() {
       <button
         type="button"
         onClick={() => navigate('/write')}
-        className="fixed bottom-24 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-3xl text-white shadow-xl transition active:scale-95"
+        className="fixed bottom-24 right-5 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-2xl text-white shadow-lg transition active:scale-95"
         aria-label="글쓰기"
       >
         +

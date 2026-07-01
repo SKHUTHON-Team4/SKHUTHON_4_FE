@@ -30,7 +30,7 @@ export default function Home() {
         backgroundPosition: 'center top',
       }}
     >
-      <div className="w-full max-w-[1300px] mx-auto flex flex-col flex-1 px-6 pt-12 pb-20">
+      <div className="w-full max-w-[1300px] mx-auto flex flex-col flex-1 px-6 pt-12 pb-24 sm:pb-20">
         {/* 헤더 */}
         <header className="flex items-start justify-between">
           <div>
@@ -38,7 +38,7 @@ export default function Home() {
             <h1 className="mt-1 text-[22px] font-extrabold text-slate-900">
               오늘의 감정을 기록해볼까요?
             </h1>
-            <p className="mt-2 text-[14px] font-semibold text-slate-500">
+            <p className="mt-2 text-[15px] font-bold text-slate-500">
               {new Date().toLocaleDateString('ko-KR', {
                 year: 'numeric', month: 'numeric', day: 'numeric', weekday: 'short',
               })}
@@ -74,7 +74,7 @@ export default function Home() {
           }}
         >
           {mood?.ageGroup && (
-            <p className="text-center text-[12px] font-semibold text-primary mb-1">
+            <p className="text-center text-[13px] font-bold text-primary mb-1">
               {mood.ageGroup}의 오늘 분위기
             </p>
           )}

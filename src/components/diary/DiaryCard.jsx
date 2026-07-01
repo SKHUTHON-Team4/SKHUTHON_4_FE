@@ -7,25 +7,25 @@ export default function DiaryCard({ diary }) {
   return (
     <div
       onClick={() => navigate(`/diary/${diary.id}`)}
-      className="bg-white rounded-2xl p-4 mb-3 shadow-sm cursor-pointer active:opacity-80"
+      className="mb-3 cursor-pointer rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-100 active:opacity-80"
     >
-      <div className="flex items-center gap-2 mb-2">
-        <div className="w-8 h-8 rounded-full bg-primary-light flex items-center justify-center text-xs font-bold text-primary">
+      <div className="mb-3 flex items-center gap-3">
+        <div className="flex h-9 w-9 rounded-full bg-primary-light items-center justify-center text-sm font-bold text-primary">
           {diary.nickname?.[0]}
         </div>
         <div className="flex-1">
-          <p className="text-sm font-medium">{diary.nickname}</p>
-          <p className="text-xs text-gray-400">{diary.diaryDate}</p>
+          <p className="text-sm font-bold text-gray-950">{diary.nickname}</p>
+          <p className="mt-0.5 text-xs text-gray-400">{diary.diaryDate}</p>
         </div>
         {diary.emotion != null && (
-          <img src={EMOTION_IMAGE[diary.emotion]} alt="emotion" className="w-7 h-7 object-contain" />
+          <img src={EMOTION_IMAGE[diary.emotion]} alt="emotion" className="h-8 w-8 object-contain" />
         )}
       </div>
 
-      {diary.title && <p className="font-semibold text-sm mb-1">{diary.title}</p>}
-      <p className="text-sm text-gray-600 line-clamp-2">{diary.content}</p>
+      {diary.title && <p className="mb-1 text-sm font-bold text-gray-950">{diary.title}</p>}
+      <p className="line-clamp-2 text-sm leading-6 text-gray-600">{diary.content}</p>
 
-      <div className="flex gap-4 mt-3 text-xs text-gray-400">
+      <div className="mt-4 flex gap-4 text-xs font-medium text-gray-400">
         <span>❤️ {diary.empathyCount}</span>
         <span>💬 {diary.commentCount}</span>
       </div>

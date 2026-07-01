@@ -9,18 +9,55 @@ const TABS = [
   { key: 'private', label: '비공개' },
 ];
 
+const FIRST_DIARY_YEAR = 2020;
+
+function getMonthRangeUntilNow() {
+  const now = new Date();
+  const months = [];
+
+  for (let year = now.getFullYear(); year >= FIRST_DIARY_YEAR; year -= 1) {
+    const lastMonth = year === now.getFullYear() ? now.getMonth() + 1 : 12;
+
+    for (let month = lastMonth; month >= 1; month -= 1) {
+      months.push({ year, month });
+    }
+  }
+
+  return months;
+}
+
+function normalizeDiaries(diaries) {
+  return Array.from(new Map(diaries.map((diary) => [diary.id, diary])).values())
+    .sort((a, b) => new Date(b.diaryDate) - new Date(a.diaryDate));
+}
+
 export default function MyDiaryAll() {
   const navigate = useNavigate();
-  const now = new Date();
   const [diaries, setDiaries] = useState([]);
   const [tab, setTab] = useState('all');
   const [menuId, setMenuId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const load = () => {
+  const load = async () => {
     const visibility = tab === 'private' ? 'private' : 'all';
-    getMyDiaries(now.getFullYear(), now.getMonth() + 1, visibility)
-      .then((res) => setDiaries(res.data))
-      .catch(() => {});
+
+    setLoading(true);
+
+    try {
+      const results = await Promise.all(
+        getMonthRangeUntilNow().map(({ year, month }) =>
+          getMyDiaries(year, month, visibility)
+            .then((res) => res.data || [])
+            .catch(() => [])
+        )
+      );
+
+      setDiaries(normalizeDiaries(results.flat()));
+    } catch {
+      setDiaries([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { load(); }, [tab]);
@@ -37,23 +74,23 @@ export default function MyDiaryAll() {
   return (
     <div className="min-h-screen bg-gray-50 pb-10">
       {/* Header */}
-      <header className="bg-white">
-        <div className="mx-auto w-full max-w-[1180px] px-5 pt-10 pb-4 flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="flex items-center text-gray-600">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <header>
+        <div className="mx-auto flex w-full max-w-[1180px] items-center gap-3 px-5 pt-10 pb-4 sm:px-6">
+          <button onClick={() => navigate(-1)} className="flex h-9 w-9 items-center justify-center rounded-full text-gray-600 active:bg-gray-50">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M15 18l-6-6 6-6" />
             </svg>
           </button>
-          <h1 className="text-lg font-bold">전체 일기</h1>
+          <h1 className="text-xl font-extrabold text-gray-950">전체 일기</h1>
         </div>
 
         {/* Tabs */}
-        <div className="mx-auto w-full max-w-[1180px] px-5 pb-3 flex gap-2">
+        <div className="mx-auto flex w-full max-w-[1180px] gap-2 px-5 pb-4 sm:px-6">
           {TABS.map((t) => (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium ${
+              className={`rounded-full px-4 py-2 text-sm font-bold ${
                 tab === t.key ? 'bg-primary text-white' : 'bg-gray-100 text-gray-500'
               }`}
             >
@@ -64,22 +101,24 @@ export default function MyDiaryAll() {
       </header>
 
       {/* List */}
-      <div className="mx-auto w-full max-w-[1180px] px-5 pt-4 space-y-3">
-        {filtered.length === 0 ? (
-          <p className="text-center text-gray-400 py-10">일기가 없어요.</p>
+      <div className="mx-auto w-full max-w-[1180px] space-y-3 px-5 pt-5 sm:px-6">
+        {loading ? (
+          <p className="py-10 text-center text-sm text-gray-400">불러오는 중...</p>
+        ) : filtered.length === 0 ? (
+          <p className="py-10 text-center text-sm text-gray-400">일기가 없어요</p>
         ) : (
           filtered.map((d) => (
-            <div key={d.id} className="relative bg-white rounded-2xl p-4 shadow-sm flex items-center gap-3">
+            <div key={d.id} className="relative flex items-center gap-3 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-100">
               <div
                 onClick={() => navigate(`/diary/${d.id}`)}
-                className="flex items-center gap-3 flex-1 cursor-pointer"
+                className="flex flex-1 cursor-pointer items-center gap-3"
               >
                 {d.emotion != null && (
-                  <img src={EMOTION_IMAGE[d.emotion]} alt="" className="w-10 h-10 object-contain" />
+                  <img src={EMOTION_IMAGE[d.emotion]} alt="" className="h-10 w-10 object-contain" />
                 )}
                 <div>
-                  <p className="text-sm font-semibold">{d.title || d.content.slice(0, 20)}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">
+                  <p className="text-sm font-bold text-gray-950">{d.title || d.content.slice(0, 20)}</p>
+                  <p className="mt-0.5 text-xs text-gray-400">
                     {d.diaryDate} · <span className={d.isPublic ? 'text-primary' : ''}>{d.isPublic ? '공개' : '비공개'}</span>
                   </p>
                 </div>
@@ -87,13 +126,13 @@ export default function MyDiaryAll() {
 
               <button
                 onClick={() => setMenuId(menuId === d.id ? null : d.id)}
-                className="text-gray-400 px-2 text-lg"
+                className="flex h-9 w-9 items-center justify-center rounded-full text-lg text-gray-400 active:bg-gray-50"
               >
                 ⋯
               </button>
 
               {menuId === d.id && (
-                <div className="absolute right-4 top-12 bg-white rounded-xl shadow-lg border border-gray-100 z-10 overflow-hidden">
+                <div className="absolute right-4 top-14 z-10 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-lg">
                   <button
                     onClick={() => navigate(`/diary/${d.id}/edit`)}
                     className="block w-24 px-4 py-2.5 text-sm text-left hover:bg-gray-50"

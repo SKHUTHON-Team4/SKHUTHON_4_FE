@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Check } from 'lucide-react';
 import { createDiary, updateEmotion, updateDiary, getDiary } from '../api';
 import EmotionModal from '../components/diary/EmotionModal';
 import useAuthStore from '../store/authStore';
@@ -80,7 +81,7 @@ export default function Write() {
 
   return (
     <div className="min-h-screen bg-[#FBFAFF]">
-      <div className="mx-auto w-full max-w-[760px] px-5 pt-9 pb-8">
+      <div className="mx-auto w-full max-w-[760px] px-5 pt-11 pb-8">
         <header className="flex items-center justify-between">
           <button
             onClick={() => navigate(-1)}
@@ -101,11 +102,11 @@ export default function Write() {
           </button>
         </header>
 
-        <section className="mt-8">
-          <h2 className="text-[24px] font-extrabold text-gray-900">
+        <section className="mt-10">
+          <h2 className="text-lg font-bold text-gray-800">
             오늘, 어떤 하루였나요?
           </h2>
-          <p className="mt-2 text-[16px] font-medium text-gray-400">
+          <p className="mt-2 text-sm font-semibold text-gray-500">
             마음껏 적어보세요
           </p>
         </section>
@@ -137,8 +138,11 @@ export default function Write() {
           </div>
 
           <div className="rounded-[18px] border border-gray-200 bg-white px-5 py-6 shadow-sm">
-            <p className="text-[16px] font-extrabold text-gray-900">
+            <p className="text-[17px] font-extrabold text-gray-900">
               오늘의 감정은?
+            </p>
+            <p className="mt-1 text-[14px] font-medium text-gray-400">
+              지금 마음에 가까운 감정을 골라주세요
             </p>
 
             <div className="mt-6 grid grid-cols-5 gap-2">
@@ -183,19 +187,18 @@ export default function Write() {
               <button
                 type="button"
                 onClick={() => setIsPublic(false)}
-                className={`flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold text-white ${
+                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition active:scale-95 ${
                   !isPublic ? 'bg-primary' : 'bg-gray-200'
                 }`}
+                aria-label="비공개로 설정"
               >
-                ✓
+                <Check size={15} strokeWidth={3} className="text-white" />
               </button>
             </div>
 
             <div className="mt-5 rounded-xl bg-[#F8F2FF] px-4 py-4">
               <p className="text-[13px] leading-relaxed font-medium text-[#7C5CFC]">
-                🔒 비공개 일기는 AI 분석 및 추천 시스템에 사용되지 않으며,
-                <br />
-                본인만 확인할 수 있어요.
+                비공개 일기는 AI 분석 및 추천에 사용되지 않으며, 본인만 확인할 수 있어요
               </p>
             </div>
           </div>
@@ -205,7 +208,7 @@ export default function Write() {
               <div className="flex items-center gap-4">
                 <span className="text-[25px]">🌐</span>
                 <div>
-                  <p className="text-[17px] font-extrabold text-primary">
+                  <p className="text-[17px] font-extrabold text-gray-900">
                     공유하기
                   </p>
                   <p className="mt-1 text-[14px] font-medium text-gray-400">
@@ -218,20 +221,19 @@ export default function Write() {
                 <button
                   type="button"
                   onClick={() => setIsPublic(true)}
-                  className={`flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold text-white ${
+                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition active:scale-95 ${
                     isPublic ? 'bg-primary' : 'bg-gray-200'
                   }`}
+                  aria-label="공개로 설정"
                 >
-                  ✓
+                  <Check size={15} strokeWidth={3} className="text-white" />
                 </button>
               </div>
             </div>
 
-            <div className="mt-5 rounded-xl bg-[#FBF9FF] px-4 py-4">
+            <div className="mt-5 rounded-xl bg-[#F8F2FF] px-4 py-4">
               <p className="text-[13px] leading-relaxed font-medium text-[#7C5CFC]">
-                공유한 일기는 감정 및 관심사 키워드 분석을 통해
-                <br />
-                커뮤니티 추천 콘텐츠 생성에 활용될 수 있어요.
+                공유한 일기는 감정과 관심사 분석을 통해 커뮤니티 추천에 활용될 수 있어요
               </p>
             </div>
           </div>

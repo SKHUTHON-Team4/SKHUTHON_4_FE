@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const API_BASE_URL = import.meta.env.DEV ? '' : 'https://gksruf.store';
+
 const api = axios.create({
-  baseURL: 'https://gksruf.store',
+  baseURL: API_BASE_URL,
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -23,7 +25,7 @@ api.interceptors.response.use(
         const expiredToken = localStorage.getItem('accessToken') || localStorage.getItem('token');
         if (!expiredToken) return Promise.reject(err);
 
-        const res = await axios.post('https://gksruf.store/api/auth/refresh', null, {
+        const res = await axios.post(`${API_BASE_URL}/api/auth/refresh`, null, {
           headers: { Authorization: `Bearer ${expiredToken}` },
         });
         const newAccessToken = res.data?.data?.accessToken;

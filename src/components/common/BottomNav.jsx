@@ -37,7 +37,7 @@ const TABS = [
   },
   {
     path: '/profile',
-    label: '마이',
+    label: '프로필',
     icon: (active) => (
       <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke={active ? '#7C5CFC' : '#9CA3AF'} strokeWidth="2">
         <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />

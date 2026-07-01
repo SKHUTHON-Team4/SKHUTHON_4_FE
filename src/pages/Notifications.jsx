@@ -2,6 +2,22 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getNotifications, readAllNotifications } from '../api';
 
+const NOTIFICATION_META = {
+  EMPATHY: {
+    dotClassName: 'bg-red-400',
+  },
+  COMMENT: {
+    dotClassName: 'bg-primary',
+  },
+};
+
+function cleanNotificationMessage(message = '') {
+  return message
+    .replace(/[❤️💬]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 export default function Notifications() {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
@@ -39,25 +55,31 @@ export default function Notifications() {
           </div>
         ) : (
           <div className="space-y-3">
-            {notifications.map((n) => (
-              <div
-                key={n.id}
-                onClick={() => n.diaryId && navigate(`/diary/${n.diaryId}`)}
-                className={`bg-white rounded-2xl p-4 shadow-sm cursor-pointer flex items-start gap-3 ${
-                  !n.isRead ? 'border-l-4 border-primary' : ''
-                }`}
-              >
-                <span className="text-xl">{n.type === 'EMPATHY' ? '❤️' : '💬'}</span>
-                <div className="flex-1">
-                  <p className="text-sm text-gray-700">{n.message}</p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    {new Date(n.createdAt).toLocaleDateString('ko-KR', {
-                      month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit',
-                    })}
-                  </p>
+            {notifications.map((n) => {
+              const meta = NOTIFICATION_META[n.type] || NOTIFICATION_META.COMMENT;
+
+              return (
+                <div
+                  key={n.id}
+                  onClick={() => n.diaryId && navigate(`/diary/${n.diaryId}`)}
+                  className={`flex cursor-pointer items-start gap-3 rounded-2xl bg-white p-4 shadow-sm ${
+                    !n.isRead ? 'border-l-4 border-primary' : ''
+                  }`}
+                >
+                  <span className={`mt-2 h-2 w-2 shrink-0 rounded-full ${meta.dotClassName}`} />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-gray-700">
+                      {cleanNotificationMessage(n.message)}
+                    </p>
+                    <p className="mt-1 text-xs text-gray-400">
+                      {new Date(n.createdAt).toLocaleDateString('ko-KR', {
+                        month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit',
+                      })}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

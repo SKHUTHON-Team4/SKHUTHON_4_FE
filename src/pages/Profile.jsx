@@ -115,9 +115,9 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-28 page-enter">
-      <main className="mx-auto w-full max-w-[1180px] px-5 pt-8">
-        <h1 className="mb-5 text-[26px] font-bold tracking-[-0.04em] text-gray-950">
-          마이
+      <main className="mx-auto w-full max-w-[1180px] px-5 pt-10 sm:px-6">
+        <h1 className="mb-5 text-xl font-bold text-gray-800">
+          프로필
         </h1>
 
         {/* 프로필 카드 */}
@@ -237,8 +237,8 @@ export default function Profile() {
               aria-label="밤 10시 알림 설정"
             >
               <span
-                className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
-                  profile.notificationNight ? 'translate-x-6' : 'translate-x-0.5'
+                className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                  profile.notificationNight ? 'translate-x-6' : 'translate-x-0'
                 }`}
               />
             </button>
@@ -263,8 +263,8 @@ export default function Profile() {
               aria-label="아침 8시 30분 알림 설정"
             >
               <span
-                className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
-                  profile.notificationMorning ? 'translate-x-6' : 'translate-x-0.5'
+                className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                  profile.notificationMorning ? 'translate-x-6' : 'translate-x-0'
                 }`}
               />
             </button>
@@ -288,7 +288,7 @@ export default function Profile() {
       <button
         type="button"
         onClick={() => navigate('/write')}
-        className="fixed bottom-24 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-3xl text-white shadow-xl transition active:scale-95"
+        className="fixed bottom-24 right-5 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-2xl text-white shadow-lg transition active:scale-95"
         aria-label="글쓰기"
       >
         +

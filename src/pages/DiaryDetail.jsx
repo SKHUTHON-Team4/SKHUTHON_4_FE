@@ -113,7 +113,7 @@ export default function DiaryDetail() {
   const isMine = user && String(user.id) === String(diary.memberId);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col pb-40">
+    <div className="min-h-screen overflow-x-hidden bg-white flex flex-col pb-40">
       <div className="mx-auto w-full max-w-[760px]">
         <header className="flex items-center justify-between px-5 pt-10 pb-4">
           <button onClick={() => navigate(-1)} className="flex items-center text-gray-600">
@@ -150,10 +150,10 @@ export default function DiaryDetail() {
           </div>
 
           {diary.title && (
-            <h2 className="text-xl font-bold mb-3">{diary.title}</h2>
+            <h2 className="text-xl font-bold mb-3 [overflow-wrap:anywhere]">{diary.title}</h2>
           )}
 
-          <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+          <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line [overflow-wrap:anywhere]">
             {diary.content}
           </p>
 
@@ -188,7 +188,7 @@ export default function DiaryDetail() {
                   </p>
                 </div>
 
-                <p className="text-sm text-gray-700 mt-0.5 break-words">
+                <p className="text-sm text-gray-700 mt-0.5 [overflow-wrap:anywhere]">
                   {c.content}
                 </p>
 
