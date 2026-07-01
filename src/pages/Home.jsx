@@ -74,12 +74,12 @@ export default function Home() {
           }}
         >
           {mood?.ageGroup && (
-            <p className="text-center text-[13px] font-bold text-primary mb-1">
+            <p className="text-center text-[13px] font-light text-primary mb-1">
               {mood.ageGroup}의 오늘 분위기
             </p>
           )}
 
-          <p className="text-center text-[17px] leading-relaxed font-extrabold text-slate-900 mb-4">
+          <p className="text-center text-[17px] leading-relaxed font-medium text-slate-900 mb-4">
             {mood?.moodMessage || '오늘의 작은 노력이 큰 변화를 만들어요.'}
           </p>
 
