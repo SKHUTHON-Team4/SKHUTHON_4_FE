@@ -14,7 +14,7 @@ export default function MyDiaryAll() {
   const now = new Date();
   const [diaries, setDiaries] = useState([]);
   const [tab, setTab] = useState('all');
-  const [menuId, setMenuId] = useState(null);   // 점 세개 열린 일기 id
+  const [menuId, setMenuId] = useState(null);
 
   const load = () => {
     const visibility = tab === 'private' ? 'private' : 'all';
@@ -25,7 +25,6 @@ export default function MyDiaryAll() {
 
   useEffect(() => { load(); }, [tab]);
 
-  // 공개 탭이면 공개 일기만 필터
   const filtered = tab === 'public' ? diaries.filter((d) => d.isPublic) : diaries;
 
   const handleDelete = async (id) => {
@@ -38,28 +37,34 @@ export default function MyDiaryAll() {
   return (
     <div className="min-h-screen bg-gray-50 pb-10">
       {/* Header */}
-      <header className="bg-white px-5 pt-10 pb-4 flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="text-gray-400 text-lg">‹</button>
-        <h1 className="text-lg font-bold">전체 일기</h1>
+      <header className="bg-white">
+        <div className="mx-auto w-full max-w-[1180px] px-5 pt-10 pb-4 flex items-center gap-3">
+          <button onClick={() => navigate(-1)} className="flex items-center text-gray-600">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+          <h1 className="text-lg font-bold">전체 일기</h1>
+        </div>
+
+        {/* Tabs */}
+        <div className="mx-auto w-full max-w-[1180px] px-5 pb-3 flex gap-2">
+          {TABS.map((t) => (
+            <button
+              key={t.key}
+              onClick={() => setTab(t.key)}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium ${
+                tab === t.key ? 'bg-primary text-white' : 'bg-gray-100 text-gray-500'
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
       </header>
 
-      {/* Tabs */}
-      <div className="bg-white px-5 pb-3 flex gap-2">
-        {TABS.map((t) => (
-          <button
-            key={t.key}
-            onClick={() => setTab(t.key)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium ${
-              tab === t.key ? 'bg-primary text-white' : 'bg-gray-100 text-gray-500'
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
       {/* List */}
-      <div className="px-4 pt-4 space-y-3">
+      <div className="mx-auto w-full max-w-[1180px] px-5 pt-4 space-y-3">
         {filtered.length === 0 ? (
           <p className="text-center text-gray-400 py-10">일기가 없어요.</p>
         ) : (
@@ -80,7 +85,6 @@ export default function MyDiaryAll() {
                 </div>
               </div>
 
-              {/* 점 세개 */}
               <button
                 onClick={() => setMenuId(menuId === d.id ? null : d.id)}
                 className="text-gray-400 px-2 text-lg"
@@ -88,7 +92,6 @@ export default function MyDiaryAll() {
                 ⋯
               </button>
 
-              {/* 수정/삭제 메뉴 */}
               {menuId === d.id && (
                 <div className="absolute right-4 top-12 bg-white rounded-xl shadow-lg border border-gray-100 z-10 overflow-hidden">
                   <button

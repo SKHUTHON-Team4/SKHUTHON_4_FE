@@ -28,7 +28,6 @@ export default function DiaryDetail() {
   const [showReport, setShowReport] = useState(false);
   const [reportTarget, setReportTarget] = useState(null);
 
-  // 키보드 높이만큼 입력창을 띄우기 위한 offset
   const [keyboardOffset, setKeyboardOffset] = useState(0);
   const inputRef = useRef(null);
 
@@ -38,7 +37,6 @@ export default function DiaryDetail() {
     getEmpathy(id).then((r) => setEmpathy(r.data));
   }, [id]);
 
-  // visualViewport로 키보드 높이 감지
   useEffect(() => {
     const vv = window.visualViewport;
     if (!vv) return;
@@ -116,134 +114,138 @@ export default function DiaryDetail() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col pb-40">
-      <header className="flex items-center justify-between px-5 pt-10 pb-4">
-        <button onClick={() => navigate(-1)} className="flex items-center text-gray-600">
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
-        </button>
-
-        {!isMine && (
-          <button onClick={openDiaryReport} className="text-xs text-gray-400">
-            신고
+      <div className="mx-auto w-full max-w-[760px]">
+        <header className="flex items-center justify-between px-5 pt-10 pb-4">
+          <button onClick={() => navigate(-1)} className="flex items-center text-gray-600">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
           </button>
-        )}
-      </header>
 
-      <div className="px-5">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center font-bold text-primary">
-            {diary.nickname?.[0]}
+          {!isMine && (
+            <button onClick={openDiaryReport} className="text-xs text-gray-400">
+              신고
+            </button>
+          )}
+        </header>
+
+        <div className="px-5">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center font-bold text-primary">
+              {diary.nickname?.[0]}
+            </div>
+
+            <div>
+              <p className="font-medium text-sm">{diary.nickname}</p>
+              <p className="text-xs text-gray-400">{diary.diaryDate}</p>
+            </div>
+
+            {diary.emotion != null && (
+              <img
+                src={EMOTION_IMAGE[diary.emotion]}
+                alt="emotion"
+                className="w-9 h-9 ml-auto object-contain"
+              />
+            )}
           </div>
 
-          <div>
-            <p className="font-medium text-sm">{diary.nickname}</p>
-            <p className="text-xs text-gray-400">{diary.diaryDate}</p>
-          </div>
+          {diary.title && (
+            <h2 className="text-xl font-bold mb-3">{diary.title}</h2>
+          )}
 
-          {diary.emotion != null && (
-            <img
-              src={EMOTION_IMAGE[diary.emotion]}
-              alt="emotion"
-              className="w-9 h-9 ml-auto object-contain"
-            />
+          <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+            {diary.content}
+          </p>
+
+          {empathy && (
+            <button
+              onClick={handleEmpathy}
+              className={`mt-6 flex items-center gap-2 px-4 py-2 rounded-full border transition-colors ${empathy.isEmpathized
+                  ? "border-primary text-primary bg-primary-light"
+                  : "border-gray-200 text-gray-400"
+                }`}
+            >
+              <span>❤️</span>
+              <span className="text-sm">{empathy.empathyCount}</span>
+            </button>
           )}
         </div>
 
-        {diary.title && (
-          <h2 className="text-xl font-bold mb-3">{diary.title}</h2>
-        )}
+        <div className="mt-6 px-5">
+          <p className="font-semibold text-sm mb-3">댓글 {comments.length}</p>
 
-        <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-          {diary.content}
-        </p>
-
-        {empathy && (
-          <button
-            onClick={handleEmpathy}
-            className={`mt-6 flex items-center gap-2 px-4 py-2 rounded-full border transition-colors ${empathy.isEmpathized
-                ? "border-primary text-primary bg-primary-light"
-                : "border-gray-200 text-gray-400"
-              }`}
-          >
-            <span>❤️</span>
-            <span className="text-sm">{empathy.empathyCount}</span>
-          </button>
-        )}
-      </div>
-
-      <div className="mt-6 px-5">
-        <p className="font-semibold text-sm mb-3">댓글 {comments.length}</p>
-
-        {comments.map((c) => (
-          <div key={c.id} className="relative flex gap-3 mb-4 items-start pr-10">
-            <div className="w-8 h-8 rounded-full bg-primary-light flex items-center justify-center text-xs font-bold text-primary shrink-0">
-              {c.nickname?.[0]}
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-medium truncate">{c.nickname}</p>
-                <p className="text-xs text-gray-400 shrink-0">
-                  {c.createdAt?.slice(0, 10)}
-                </p>
+          {comments.map((c) => (
+            <div key={c.id} className="relative flex gap-3 mb-4 items-start pr-10">
+              <div className="w-8 h-8 rounded-full bg-primary-light flex items-center justify-center text-xs font-bold text-primary shrink-0">
+                {c.nickname?.[0]}
               </div>
 
-              <p className="text-sm text-gray-700 mt-0.5 break-words">
-                {c.content}
-              </p>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium truncate">{c.nickname}</p>
+                  <p className="text-xs text-gray-400 shrink-0">
+                    {c.createdAt?.slice(0, 10)}
+                  </p>
+                </div>
 
-              {user && String(user.id) === String(c.memberId) && (
-                <button
-                  onClick={() => handleDeleteComment(c.id)}
-                  className="text-xs text-gray-300 mt-1"
-                >
-                  삭제
-                </button>
-              )}
+                <p className="text-sm text-gray-700 mt-0.5 break-words">
+                  {c.content}
+                </p>
+
+                {user && String(user.id) === String(c.memberId) && (
+                  <button
+                    onClick={() => handleDeleteComment(c.id)}
+                    className="text-xs text-gray-300 mt-1"
+                  >
+                    삭제
+                  </button>
+                )}
+              </div>
+
+              <button
+                onClick={() => openCommentReport(c.id)}
+                className="absolute right-0 top-0 text-xs text-gray-400"
+              >
+                신고
+              </button>
             </div>
-
-            <button
-              onClick={() => openCommentReport(c.id)}
-              className="absolute right-0 top-0 text-xs text-gray-400"
-            >
-              신고
-            </button>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       <div
-        className="fixed left-0 right-0 bg-white border-t border-gray-100 px-4 py-3 flex gap-2 transition-[bottom] duration-100"
+        className="fixed left-0 right-0 bg-white border-t border-gray-100 transition-[bottom] duration-100"
         style={{ bottom: keyboardOffset }}
       >
-        <input
-          ref={inputRef}
-          className="flex-1 border border-gray-200 rounded-full px-4 py-2 text-base outline-none"
-          placeholder="댓글을 입력하세요 (최대 200자)"
-          maxLength={200}
-          value={commentText}
-          onChange={(e) => setCommentText(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              handleComment();
-            }
-          }}
-        />
+        <div className="mx-auto w-full max-w-[760px] px-4 py-3 flex gap-2">
+          <input
+            ref={inputRef}
+            className="flex-1 border border-gray-200 rounded-full px-4 py-2 text-base outline-none"
+            placeholder="댓글을 입력하세요 (최대 200자)"
+            maxLength={200}
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleComment();
+              }
+            }}
+          />
 
-        <button
-          onClick={handleComment}
-          disabled={isSubmittingComment}
-          className="bg-primary text-white text-sm px-4 rounded-full disabled:opacity-50 whitespace-nowrap shrink-0"
-        >
-          등록
-        </button>
+          <button
+            onClick={handleComment}
+            disabled={isSubmittingComment}
+            className="bg-primary text-white text-sm px-4 rounded-full disabled:opacity-50 whitespace-nowrap shrink-0"
+          >
+            등록
+          </button>
+        </div>
       </div>
 
       {showReport && (
         <div className="fixed inset-0 bg-black/40 flex items-end z-50">
-          <div className="bg-white w-full rounded-t-3xl p-6">
+          <div className="bg-white w-full max-w-[760px] mx-auto rounded-t-3xl p-6">
             <h3 className="font-bold text-lg mb-4">신고 사유를 선택해주세요</h3>
 
             {REPORT_REASONS.map((r, i) => (

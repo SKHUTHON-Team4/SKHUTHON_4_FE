@@ -14,7 +14,7 @@ const emotions = [
 
 export default function Write() {
   const navigate = useNavigate();
-  const { id } = useParams();          // id 있으면 수정 모드
+  const { id } = useParams();
   const isEdit = Boolean(id);
   const user = useAuthStore((s) => s.user);
   const contentRef = useRef(null);
@@ -27,7 +27,6 @@ export default function Write() {
   const [createdId, setCreatedId] = useState(null);
   const [showEmotion, setShowEmotion] = useState(false);
 
-  // 수정 모드: 기존 일기 불러오기
   useEffect(() => {
     if (isEdit) {
       getDiary(id).then((res) => {
@@ -56,12 +55,10 @@ export default function Write() {
 
     try {
       if (isEdit) {
-        // 수정
         await updateDiary(id, { title, content, isPublic });
         await updateEmotion(id, selectedEmotion);
         navigate('/my');
       } else {
-        // 신규 작성
         const res = await createDiary({ title, content, isPublic });
         const diaryId = res.data.id;
         setCreatedId(diaryId);
@@ -82,172 +79,172 @@ export default function Write() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FBFAFF] px-5 pt-9 pb-8">
-      <header className="flex items-center justify-between">
-        <button
-          onClick={() => navigate(-1)}
-          className="text-[15px] font-medium text-gray-400"
-        >
-          취소
-        </button>
+    <div className="min-h-screen bg-[#FBFAFF]">
+      <div className="mx-auto w-full max-w-[760px] px-5 pt-9 pb-8">
+        <header className="flex items-center justify-between">
+          <button
+            onClick={() => navigate(-1)}
+            className="text-[15px] font-medium text-gray-400"
+          >
+            취소
+          </button>
 
-        <h1 className="text-[17px] font-extrabold text-gray-900">
-          {isEdit ? '일기 수정' : '일기 작성'}
-        </h1>
+          <h1 className="text-[17px] font-extrabold text-gray-900">
+            {isEdit ? '일기 수정' : '일기 작성'}
+          </h1>
 
-        <button
-          onClick={handleSubmit}
-          className="text-[15px] font-extrabold text-primary"
-        >
-          저장
-        </button>
-      </header>
+          <button
+            onClick={handleSubmit}
+            className="text-[15px] font-extrabold text-primary"
+          >
+            저장
+          </button>
+        </header>
 
-      <section className="mt-8">
-        <h2 className="text-[24px] font-extrabold text-gray-900">
-          오늘, 어떤 하루였나요?
-        </h2>
-        <p className="mt-2 text-[16px] font-medium text-gray-400">
-          마음껏 적어보세요
-        </p>
-      </section>
-
-      <section className="mt-8 space-y-4">
-        <div className="flex items-center rounded-[18px] border border-gray-200 bg-white px-5 py-4 shadow-sm">
-          <input
-            className="flex-1 bg-transparent text-[16px] outline-none placeholder:text-gray-400"
-            placeholder="제목을 입력해주세요"
-            maxLength={50}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </div>
-
-        <div className="rounded-[18px] border border-gray-200 bg-white px-5 py-5 shadow-sm">
-          <textarea
-            ref={contentRef}
-            className="min-h-[124px] w-full resize-none overflow-hidden bg-transparent text-[15px] leading-relaxed text-gray-700 outline-none placeholder:text-gray-400"
-            placeholder="최소 100자 이상 입력해주세요"
-            maxLength={500}
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          />
-
-          <p className={`text-right text-[14px] font-medium ${content.length < 100 ? 'text-red-400' : 'text-gray-400'}`}>
-            {content.length} / 500 {content.length < 100 && '(최소 100자)'}
+        <section className="mt-8">
+          <h2 className="text-[24px] font-extrabold text-gray-900">
+            오늘, 어떤 하루였나요?
+          </h2>
+          <p className="mt-2 text-[16px] font-medium text-gray-400">
+            마음껏 적어보세요
           </p>
-        </div>
+        </section>
 
-        <div className="rounded-[18px] border border-gray-200 bg-white px-5 py-6 shadow-sm">
-          <p className="text-[16px] font-extrabold text-gray-900">
-            오늘의 감정은?
-          </p>
-
-          <div className="mt-6 grid grid-cols-5 gap-2">
-            {emotions.map((emotion) => (
-              <button
-                key={emotion.value}
-                type="button"
-                onClick={() => setSelectedEmotion(emotion.value)}
-                className={`flex flex-col items-center rounded-2xl py-2 transition ${
-                  selectedEmotion === emotion.value
-                    ? 'bg-[#F1EAFE] ring-2 ring-primary'
-                    : ''
-                }`}
-              >
-                <img
-                  src={emotion.img}
-                  alt={emotion.label}
-                  className="h-12 w-12 object-contain"
-                />
-                <span className="mt-2 text-[12px] font-medium text-gray-400">
-                  {emotion.label}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-[18px] border border-gray-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <span className="text-[25px]">🔒</span>
-              <div>
-                <p className="text-[17px] font-extrabold text-gray-900">
-                  나만 보기
-                </p>
-                <p className="mt-1 text-[14px] font-medium text-gray-400">
-                  비공개로 저장해요
-                </p>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setIsPublic(false)}
-              className={`flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold text-white ${
-                !isPublic ? 'bg-primary' : 'bg-gray-200'
-              }`}
-            >
-              ✓
-            </button>
+        <section className="mt-8 space-y-4">
+          <div className="flex items-center rounded-[18px] border border-gray-200 bg-white px-5 py-4 shadow-sm">
+            <input
+              className="flex-1 bg-transparent text-[16px] outline-none placeholder:text-gray-400"
+              placeholder="제목을 입력해주세요"
+              maxLength={50}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
           </div>
 
-          <div className="mt-5 rounded-xl bg-[#F8F2FF] px-4 py-4">
-            <p className="text-[13px] leading-relaxed font-medium text-[#7C5CFC]">
-              🔒 비공개 일기는 AI 분석 및 추천 시스템에 사용되지 않으며,
-              <br />
-              본인만 확인할 수 있어요.
+          <div className="rounded-[18px] border border-gray-200 bg-white px-5 py-5 shadow-sm">
+            <textarea
+              ref={contentRef}
+              className="min-h-[124px] w-full resize-none overflow-hidden bg-transparent text-[15px] leading-relaxed text-gray-700 outline-none placeholder:text-gray-400"
+              placeholder="최소 100자 이상 입력해주세요"
+              maxLength={500}
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+            />
+
+            <p className={`text-right text-[14px] font-medium ${content.length < 100 ? 'text-red-400' : 'text-gray-400'}`}>
+              {content.length} / 500 {content.length < 100 && '(최소 100자)'}
             </p>
           </div>
-        </div>
 
-        <div className="rounded-[18px] border border-gray-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <span className="text-[25px]">🌐</span>
-              <div>
-                <p className="text-[17px] font-extrabold text-primary">
-                  공유하기
-                </p>
-                <p className="mt-1 text-[14px] font-medium text-gray-400">
-                  커뮤니티에 공유해요
-                </p>
-              </div>
+          <div className="rounded-[18px] border border-gray-200 bg-white px-5 py-6 shadow-sm">
+            <p className="text-[16px] font-extrabold text-gray-900">
+              오늘의 감정은?
+            </p>
+
+            <div className="mt-6 grid grid-cols-5 gap-2">
+              {emotions.map((emotion) => (
+                <button
+                  key={emotion.value}
+                  type="button"
+                  onClick={() => setSelectedEmotion(emotion.value)}
+                  className={`flex flex-col items-center rounded-2xl py-2 transition ${
+                    selectedEmotion === emotion.value
+                      ? 'bg-[#F1EAFE] ring-2 ring-primary'
+                      : ''
+                  }`}
+                >
+                  <img
+                    src={emotion.img}
+                    alt={emotion.label}
+                    className="h-12 w-12 object-contain"
+                  />
+                  <span className="mt-2 text-[12px] font-medium text-gray-400">
+                    {emotion.label}
+                  </span>
+                </button>
+              ))}
             </div>
+          </div>
 
-            <div className="flex items-center gap-2">
-              
+          <div className="rounded-[18px] border border-gray-200 bg-white p-5 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <span className="text-[25px]">🔒</span>
+                <div>
+                  <p className="text-[17px] font-extrabold text-gray-900">
+                    나만 보기
+                  </p>
+                  <p className="mt-1 text-[14px] font-medium text-gray-400">
+                    비공개로 저장해요
+                  </p>
+                </div>
+              </div>
 
               <button
                 type="button"
-                onClick={() => setIsPublic(true)}
+                onClick={() => setIsPublic(false)}
                 className={`flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold text-white ${
-                  isPublic ? 'bg-primary' : 'bg-gray-200'
+                  !isPublic ? 'bg-primary' : 'bg-gray-200'
                 }`}
               >
                 ✓
               </button>
             </div>
+
+            <div className="mt-5 rounded-xl bg-[#F8F2FF] px-4 py-4">
+              <p className="text-[13px] leading-relaxed font-medium text-[#7C5CFC]">
+                🔒 비공개 일기는 AI 분석 및 추천 시스템에 사용되지 않으며,
+                <br />
+                본인만 확인할 수 있어요.
+              </p>
+            </div>
           </div>
 
-          <div className="mt-5 rounded-xl bg-[#FBF9FF] px-4 py-4">
-            <p className="text-[13px] leading-relaxed font-medium text-[#7C5CFC]">
-              공유한 일기는 감정 및 관심사 키워드 분석을 통해
-              <br />
-              커뮤니티 추천 콘텐츠 생성에 활용될 수 있어요.
+          <div className="rounded-[18px] border border-gray-200 bg-white p-5 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <span className="text-[25px]">🌐</span>
+                <div>
+                  <p className="text-[17px] font-extrabold text-primary">
+                    공유하기
+                  </p>
+                  <p className="mt-1 text-[14px] font-medium text-gray-400">
+                    커뮤니티에 공유해요
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsPublic(true)}
+                  className={`flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold text-white ${
+                    isPublic ? 'bg-primary' : 'bg-gray-200'
+                  }`}
+                >
+                  ✓
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-5 rounded-xl bg-[#FBF9FF] px-4 py-4">
+              <p className="text-[13px] leading-relaxed font-medium text-[#7C5CFC]">
+                공유한 일기는 감정 및 관심사 키워드 분석을 통해
+                <br />
+                커뮤니티 추천 콘텐츠 생성에 활용될 수 있어요.
+              </p>
+            </div>
+          </div>
+
+          {error && (
+            <p className="text-center text-[13px] font-semibold text-red-500">
+              {error}
             </p>
-          </div>
-        </div>
+          )}
+        </section>
 
-        {error && (
-          <p className="text-center text-[13px] font-semibold text-red-500">
-            {error}
-          </p>
-        )}
-      </section>
-
-      {showEmotion && <EmotionModal onSelect={handleSelectEmotion} />}
+        {showEmotion && <EmotionModal onSelect={handleSelectEmotion} />}
+      </div>
     </div>
   );
 }

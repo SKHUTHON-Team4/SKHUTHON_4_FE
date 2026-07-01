@@ -30,7 +30,7 @@ export default function Home() {
         backgroundPosition: 'center top',
       }}
     >
-      <div className="flex flex-col flex-1 px-6 pt-12 pb-20">
+      <div className="w-full max-w-[1300px] mx-auto flex flex-col flex-1 px-6 pt-12 pb-20">
         {/* 헤더 */}
         <header className="flex items-start justify-between">
           <div>
