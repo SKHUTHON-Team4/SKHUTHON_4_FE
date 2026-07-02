@@ -90,9 +90,9 @@ export default function MyDiary() {
         {/* Diary list below */}
         <section className="mt-5 rounded-2xl bg-white px-5 py-5 shadow-sm ring-1 ring-gray-100">
           <div className="mb-3 flex items-center justify-between">
-            <p className="text-base font-bold text-gray-950">전체 일기</p>
+            <p className="text-base font-bold text-gray-950">이 달의 기록</p>
             <button onClick={() => navigate('/my/all')} className="text-sm font-semibold text-primary">
-              전체 보기 ›
+              전체 일기 ›
             </button>
           </div>
           {diaries.length === 0 ? (
