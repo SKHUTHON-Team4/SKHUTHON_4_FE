@@ -39,9 +39,19 @@ export default function Login() {
       <div className="relative z-10 flex flex-col items-center">
         <button
           onClick={handleKakaoLogin}
-          className="w-full max-w-[360px] rounded-2xl bg-[#FEE500] py-4 text-[17px] font-bold text-[#191919] shadow-sm transition hover:brightness-95"
+          className="w-full max-w-[360px] flex items-center rounded-2xl bg-[#FEE500] shadow-sm transition hover:brightness-95 overflow-hidden"
         >
-          카카오로 시작하기
+          <div className="flex items-center justify-center w-14 h-14">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+              <path
+                d="M11 2C5.477 2 1 5.686 1 10.2c0 2.912 1.82 5.47 4.584 6.97l-.9 3.35a.4.4 0 00.59.444l3.94-2.61c.588.08 1.19.12 1.786.12 5.523 0 10-3.686 10-8.2S16.523 2 11 2z"
+                fill="#191919"
+              />
+            </svg>
+          </div>
+          <span className="flex-1 text-center text-[17px] font-bold text-[#191919] pr-14">
+            카카오 로그인
+          </span>
         </button>
 
         <p className="mt-6 text-center text-xs leading-5 text-gray-400">
