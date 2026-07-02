@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getMyDiaries } from '../api';
+import { getMyDiaries, deleteDiary } from '../api';
 import { EMOTION_IMAGE } from '../utils/emotion';
 import BottomNav from '../components/common/BottomNav';
 
@@ -16,6 +16,7 @@ export default function MyDiary() {
   const [year, setYear]   = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [diaries, setDiaries] = useState([]);
+  const [menuId, setMenuId] = useState(null);
 
   const today = new Date();
   const isToday = (day) =>
@@ -23,8 +24,12 @@ export default function MyDiary() {
     today.getMonth() + 1 === month &&
     today.getDate() === day;
 
-  useEffect(() => {
+  const load = () => {
     getMyDiaries(year, month).then((res) => setDiaries(res.data)).catch(() => {});
+  };
+
+  useEffect(() => {
+    load();
   }, [year, month]);
 
   const diaryMap = Object.fromEntries(
@@ -40,6 +45,13 @@ export default function MyDiary() {
   const nextMonth = () => {
     if (month === 12) { setYear((y) => y + 1); setMonth(1); }
     else setMonth((m) => m + 1);
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm('정말 삭제할까요?')) return;
+    await deleteDiary(id).catch(() => {});
+    setMenuId(null);
+    load();
   };
 
   return (
@@ -99,18 +111,45 @@ export default function MyDiary() {
             <p className="py-8 text-center text-sm text-gray-400">이 달의 일기가 없어요</p>
           ) : (
             diaries.map((d) => (
-              <div
-                key={d.id}
-                onClick={() => navigate(`/diary/${d.id}`)}
-                className="flex cursor-pointer items-center gap-3 border-b border-gray-100 py-3 last:border-b-0"
-              >
-                {d.emotion != null && (
-                  <img src={EMOTION_IMAGE[d.emotion]} alt="" className="h-9 w-9 object-contain" />
-                )}
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-950">{d.title || d.content.slice(0, 20)}</p>
-                  <p className="mt-0.5 text-xs text-gray-400">{d.diaryDate} · {d.isPublic ? '공개' : '비공개'}</p>
+              <div key={d.id} className="relative flex items-center gap-3 border-b border-gray-100 py-3 last:border-b-0">
+                <div
+                  onClick={() => navigate(`/diary/${d.id}`)}
+                  className="flex flex-1 cursor-pointer items-center gap-3"
+                >
+                  {d.emotion != null && (
+                    <img src={EMOTION_IMAGE[d.emotion]} alt="" className="h-9 w-9 object-contain" />
+                  )}
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-gray-950">{d.title || d.content.slice(0, 20)}</p>
+                    <p className="mt-0.5 text-xs text-gray-400">{d.diaryDate} · {d.isPublic ? '공개' : '비공개'}</p>
+                  </div>
                 </div>
+
+                {/* 점 세개 버튼 */}
+                <button
+                  onClick={() => setMenuId(menuId === d.id ? null : d.id)}
+                  className="shrink-0 px-2 text-lg text-gray-400"
+                >
+                  ⋯
+                </button>
+
+                {/* 수정/삭제 메뉴 */}
+                {menuId === d.id && (
+                  <div className="absolute right-4 top-12 z-10 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-lg">
+                    <button
+                      onClick={() => navigate(`/diary/${d.id}/edit`)}
+                      className="block w-24 px-4 py-2.5 text-left text-sm hover:bg-gray-50"
+                    >
+                      수정
+                    </button>
+                    <button
+                      onClick={() => handleDelete(d.id)}
+                      className="block w-24 px-4 py-2.5 text-left text-sm text-red-500 hover:bg-gray-50"
+                    >
+                      삭제
+                    </button>
+                  </div>
+                )}
               </div>
             ))
           )}
