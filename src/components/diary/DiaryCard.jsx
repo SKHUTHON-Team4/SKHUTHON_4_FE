@@ -1,8 +1,28 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Heart, MessageCircle } from 'lucide-react';
+import { getEmpathy } from '../../api';
 import { EMOTION_IMAGE } from '../../utils/emotion';
 
 export default function DiaryCard({ diary }) {
   const navigate = useNavigate();
+  const [isEmpathized, setIsEmpathized] = useState(
+    diary.isEmpathized ?? diary.empathized ?? false
+  );
+
+  useEffect(() => {
+    let mounted = true;
+
+    getEmpathy(diary.id)
+      .then((res) => {
+        if (mounted) setIsEmpathized(res.data?.isEmpathized ?? false);
+      })
+      .catch(() => {});
+
+    return () => {
+      mounted = false;
+    };
+  }, [diary.id]);
 
   return (
     <div
@@ -25,9 +45,20 @@ export default function DiaryCard({ diary }) {
       {diary.title && <p className="mb-1 text-sm font-bold text-gray-950">{diary.title}</p>}
       <p className="line-clamp-2 text-sm leading-6 text-gray-600">{diary.content}</p>
 
-      <div className="mt-4 flex gap-4 text-xs font-medium text-gray-400">
-        <span>❤️ {diary.empathyCount}</span>
-        <span>💬 {diary.commentCount}</span>
+      <div className="mt-4 flex gap-4 text-xs font-semibold text-gray-400">
+        <span className="flex items-center gap-1">
+          <Heart
+            size={14}
+            strokeWidth={2}
+            className="text-red-400"
+            fill={isEmpathized ? 'currentColor' : 'none'}
+          />
+          {diary.empathyCount}
+        </span>
+        <span className="flex items-center gap-1">
+          <MessageCircle size={14} strokeWidth={2} className="text-gray-400" />
+          {diary.commentCount}
+        </span>
       </div>
     </div>
   );

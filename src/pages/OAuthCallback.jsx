@@ -14,8 +14,7 @@ export default function OAuthCallback() {
     login(accessToken);
     getMe().then((res) => {
       setUser(res.data);
-      const { nickname, age } = res.data;
-      navigate(nickname && age ? '/home' : '/onboarding');
+      navigate(res.data?.age == null ? '/onboarding' : '/home');
     }).catch(() => navigate('/'));
   }, []);
 
