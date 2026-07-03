@@ -27,6 +27,13 @@ export default function Profile() {
       .catch(() => {});
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
   const handleNightNotification = async () => {
     await toggleNightNotification().catch(() => {});
 
@@ -114,8 +121,8 @@ export default function Profile() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-28 page-enter">
-      <main className="mx-auto w-full max-w-[1180px] px-5 pt-10 sm:px-6">
+    <div className="h-screen overflow-hidden bg-gray-50 pb-28 page-enter">
+      <main className="mx-auto w-full max-w-[1180px] overflow-hidden px-5 pt-10 sm:px-6">
         <h1 className="mb-5 text-xl font-bold text-gray-800">
           프로필
         </h1>

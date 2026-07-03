@@ -19,6 +19,13 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
   const bearImage = mood ? EMOTION_IMAGE[mood.representativeEmotion] : '/assets/bear-normal.png';
 
   return (
@@ -65,7 +72,7 @@ export default function Home() {
 
         {/* 글라스 카드 */}
         <div
-          className="rounded-[28px] px-6 py-5 shadow-[0_12px_35px_rgba(80,65,140,0.2)]"
+          className="w-full max-w-[800px] mx-auto rounded-[28px] px-6 py-3.5 shadow-[0_12px_35px_rgba(80,65,140,0.2)]"
           style={{
             background: 'rgba(255, 255, 255, 0.25)',
             backdropFilter: 'blur(16px)',
@@ -79,7 +86,7 @@ export default function Home() {
             </p>
           )}
 
-          <p className="text-center text-[17px] leading-relaxed font-medium text-slate-900 mb-4">
+          <p className="text-center text-[17px] leading-relaxed font-medium text-slate-900 mb-3">
             {mood?.moodMessage || '오늘의 작은 노력이 큰 변화를 만들어요.'}
           </p>
 
@@ -89,7 +96,7 @@ export default function Home() {
           </div>
 
           <div
-            className="flex h-3 w-full overflow-hidden rounded-full mb-5"
+            className="flex h-3 w-full overflow-hidden rounded-full mb-3.5"
             style={{ background: 'rgba(255,255,255,0.3)' }}
           >
             <div style={{ width: `${mood?.positiveRatio ?? 0}%`, background: '#7C5CFC' }} />
@@ -99,7 +106,7 @@ export default function Home() {
           {/* 일기 쓰기 버튼 */}
           <button
             onClick={() => navigate('/write')}
-            className="w-full flex items-center justify-between rounded-2xl px-5 py-4"
+            className="w-full flex items-center justify-between rounded-2xl px-5 py-3"
             style={{
               background: 'rgba(255, 255, 255, 0.3)',
               border: '1px solid rgba(255, 255, 255, 0.5)',
