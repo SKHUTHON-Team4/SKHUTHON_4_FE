@@ -16,10 +16,11 @@ body { margin: 0; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif
 }
 
 @keyframes recommendRefreshProgress {
-  from { width: 0%; }
-  to   { width: 100%; }
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
 }
 
 .recommend-refresh-progress {
-  animation: recommendRefreshProgress 1.2s linear forwards;
+  width: 40%;
+  animation: recommendRefreshProgress 1.1s ease-in-out infinite;
 }

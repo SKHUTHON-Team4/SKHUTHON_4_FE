@@ -7,6 +7,7 @@ import BottomNav from '../components/common/BottomNav';
 
 const TABS = ['최신', '추천', '핫'];
 const RECOMMEND_REFRESH_MIN_MS = 1200;
+const RECOMMEND_REFRESH_TIMEOUT_MS = 10000;
 const PULL_READY_DISTANCE = 40;
 
 export default function Feed() {
@@ -105,8 +106,12 @@ export default function Feed() {
       setIsRefreshingRecommend(true);
       setEmptyMessage('');
 
+      const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('recommend feed refresh timed out')), RECOMMEND_REFRESH_TIMEOUT_MS)
+      );
+
       const [res] = await Promise.all([
-        getRecommendFeed(),
+        Promise.race([getRecommendFeed(), timeout]),
         new Promise((resolve) => setTimeout(resolve, RECOMMEND_REFRESH_MIN_MS)),
       ]);
       const recommendFeed = res.data || {};
