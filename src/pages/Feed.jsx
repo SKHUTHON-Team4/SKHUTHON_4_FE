@@ -8,7 +8,7 @@ import BottomNav from '../components/common/BottomNav';
 const TABS = ['최신', '추천', '핫'];
 const RECOMMEND_REFRESH_MIN_MS = 1200;
 const RECOMMEND_REFRESH_TIMEOUT_MS = 10000;
-const PULL_READY_DISTANCE = 40;
+const PULL_TRIGGER_DISTANCE = 40;
 
 export default function Feed() {
   const navigate = useNavigate();
@@ -149,15 +149,15 @@ export default function Feed() {
 
     pullDistanceRef.current = nextPullDistance;
     setPullDistance(nextPullDistance);
+
+    if (nextPullDistance >= PULL_TRIGGER_DISTANCE) {
+      pullStartY.current = null;
+      refreshRecommendFeed();
+    }
   };
 
   const endPull = () => {
-    if (pullDistanceRef.current >= PULL_READY_DISTANCE) {
-      refreshRecommendFeed();
-    } else {
-      setPullDistance(0);
-    }
-
+    setPullDistance(0);
     pullDistanceRef.current = 0;
     pullStartY.current = null;
   };
@@ -183,8 +183,7 @@ export default function Feed() {
     endPull();
   };
 
-  const isReadyToRefresh = pullDistance >= PULL_READY_DISTANCE;
-  const showRecommendRefresh = canPullToRefresh && (isReadyToRefresh || isRefreshingRecommend);
+  const showRecommendRefresh = canPullToRefresh && isRefreshingRecommend;
 
   return (
     <div
@@ -273,36 +272,18 @@ export default function Feed() {
         </div>
       </header>
 
-      <main
-        className="mx-auto w-full max-w-[1180px] px-5 pt-4 transition-transform sm:px-6"
-        style={{
-          transform: showRecommendRefresh && !isRefreshingRecommend
-            ? `translateY(${Math.min(pullDistance * 0.25, 18)}px)`
-            : 'translateY(0)',
-        }}
-      >
+      <main className="mx-auto w-full max-w-[1180px] px-5 pt-4 sm:px-6">
         {showRecommendRefresh && (
           <div className="mb-4 flex min-h-[360px] flex-col items-center justify-center px-5 py-8 text-center">
             <p className="text-base font-extrabold text-gray-900">
               추천 일기 가져오는 중입니다
             </p>
             <p className="mt-1 text-sm text-gray-400">
-              {isRefreshingRecommend
-                ? '내 감정 흐름과 어울리는 일기를 다시 분석하고 있어요'
-                : '손을 놓으면 추천 일기를 새로 가져와요'}
+              내 감정 흐름과 어울리는 일기를 다시 분석하고 있어요
             </p>
 
             <div className="mx-auto mt-5 h-1.5 w-full max-w-[260px] overflow-hidden rounded-full bg-gray-100">
-              <div
-                className={`h-full rounded-full bg-primary ${
-                  isRefreshingRecommend ? 'recommend-refresh-progress' : 'transition-all'
-                }`}
-                style={{
-                  width: isRefreshingRecommend
-                    ? undefined
-                    : `${Math.min(100, (pullDistance / 120) * 100)}%`,
-                }}
-              />
+              <div className="recommend-refresh-progress h-full rounded-full bg-primary" />
             </div>
           </div>
         )}
