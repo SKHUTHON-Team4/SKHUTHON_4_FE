@@ -50,7 +50,6 @@ export default function DiaryDetail() {
       const commentsWithLikes = await Promise.all(
         loadedComments.map(async (comment) => {
           const likeRes = await getCommentLike(comment.id).catch(() => ({ data: null }));
-
           return {
             ...comment,
             isLiked: likeRes.data?.isLiked ?? false,
@@ -93,11 +92,7 @@ export default function DiaryDetail() {
       setComments((prev) =>
         prev.map((comment) =>
           comment.id === commentId
-            ? {
-                ...comment,
-                isLiked: r.data.isLiked,
-                likeCount: r.data.likeCount,
-              }
+            ? { ...comment, isLiked: r.data.isLiked, likeCount: r.data.likeCount }
             : comment
         )
       )
@@ -105,12 +100,10 @@ export default function DiaryDetail() {
 
   const handleComment = async () => {
     const content = commentText.trim();
-
     if (!content || isSubmittingComment) return;
 
     try {
       setIsSubmittingComment(true);
-
       const res = await createComment(id, content);
       setComments((prev) => [...prev, { ...res.data, isLiked: false, likeCount: 0 }]);
       setCommentText("");
@@ -184,10 +177,7 @@ export default function DiaryDetail() {
                 }`}
                 aria-label={bookmark.isBookmarked ? "북마크 취소" : "북마크 추가"}
               >
-                <Bookmark
-                  size={21}
-                  fill={bookmark.isBookmarked ? "currentColor" : "none"}
-                />
+                <Bookmark size={21} fill={bookmark.isBookmarked ? "currentColor" : "none"} />
               </button>
             )}
           </div>
@@ -195,8 +185,13 @@ export default function DiaryDetail() {
 
         <div className="px-5">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center font-bold text-primary">
-              {diary.nickname?.[0]}
+            {/* 일기 작성자 프로필 */}
+            <div className="w-10 h-10 rounded-full ring-1 ring-primary/20 bg-gray-50 flex items-center justify-center shrink-0">
+              <img
+                src={`/assets/bear_profile/${diary.profileImage || 'bear_01'}.png`}
+                alt="프로필"
+                className="w-8 h-8 object-contain"
+              />
             </div>
 
             <div>
@@ -242,8 +237,13 @@ export default function DiaryDetail() {
 
           {comments.map((c) => (
             <div key={c.id} className="relative flex gap-3 mb-4 items-start pr-10">
-              <div className="w-8 h-8 rounded-full bg-primary-light flex items-center justify-center text-xs font-bold text-primary shrink-0">
-                {c.nickname?.[0]}
+              {/* 댓글 프로필 */}
+              <div className="w-8 h-8 rounded-full ring-1 ring-primary/20 bg-gray-50 flex items-center justify-center shrink-0">
+                <img
+                  src={`/assets/bear_profile/${c.profileImage || 'bear_01'}.png`}
+                  alt="프로필"
+                  className="w-6 h-6 object-contain"
+                />
               </div>
 
               <div className="flex-1 min-w-0">

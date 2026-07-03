@@ -1,9 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check, Pencil, X } from 'lucide-react';
-import { getProfile, logout, updateNickname } from '../api';
+import {
+  getProfile,
+  logout,
+  updateNickname,
+  updateProfileImage,
+} from '../api';
 import useAuthStore from '../store/authStore';
 import BottomNav from '../components/common/BottomNav';
+
+const PROFILE_IMAGES = Array.from({ length: 9 }, (_, i) => {
+  const num = String(i + 1).padStart(2, '0');
+  return `bear_${num}`;
+});
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -14,6 +24,7 @@ export default function Profile() {
   const [nicknameInput, setNicknameInput] = useState('');
   const [nicknameError, setNicknameError] = useState('');
   const [savingNickname, setSavingNickname] = useState(false);
+  const [showImagePicker, setShowImagePicker] = useState(false);
 
   useEffect(() => {
     getProfile()
@@ -76,11 +87,23 @@ export default function Profile() {
     }
   };
 
+  const handleSelectImage = async (imageKey) => {
+    try {
+      await updateProfileImage(imageKey);
+      setProfile((prev) => ({ ...prev, profileImage: imageKey }));
+      setShowImagePicker(false);
+    } catch {
+      alert('프로필 이미지 변경 중 오류가 발생했습니다.');
+    }
+  };
+
   const handleLogout = async () => {
     await logout().catch(() => {});
     logoutStore();
     navigate('/');
   };
+
+  const currentImage = profile?.profileImage || 'bear_01';
 
   if (!profile) {
     return (
@@ -106,9 +129,23 @@ export default function Profile() {
         {/* 프로필 카드 */}
         <section className="rounded-2xl bg-white px-5 py-5 shadow-sm ring-1 ring-gray-100">
           <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary-light text-2xl font-bold text-primary">
-              {profile.nickname?.[0]}
-            </div>
+            <button
+              type="button"
+              onClick={() => setShowImagePicker(true)}
+              className="relative shrink-0"
+              aria-label="프로필 이미지 변경"
+            >
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-50 ring-1 ring-primary/20">
+                <img
+                  src={`/assets/bear_profile/${currentImage}.png`}
+                  alt="프로필"
+                  className="h-10 w-10 object-contain"
+                />
+              </div>
+              <div className="absolute bottom-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-primary ring-2 ring-white">
+                <Pencil size={10} className="text-white" />
+              </div>
+            </button>
 
             <div className="min-w-0 flex-1">
               {isEditingNickname ? (
@@ -226,7 +263,7 @@ export default function Profile() {
             <div>
               <p className="text-sm font-bold text-gray-950">알림 설정</p>
               <p className="mt-0.5 text-xs text-gray-400">
-                밤/아침 알림을 관리해요
+                밤/아침 알림을 이메일·푸시로 각각 관리해요
               </p>
             </div>
 
@@ -256,6 +293,60 @@ export default function Profile() {
       >
         +
       </button>
+
+      {/* 프로필 이미지 선택 모달 */}
+      {showImagePicker && (
+        <div
+          className="fixed inset-0 z-[60] flex items-end bg-black/40"
+          onClick={() => setShowImagePicker(false)}
+        >
+          <div
+            className="mx-auto flex max-h-[80vh] w-full max-w-[1180px] flex-col rounded-t-3xl bg-white p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mx-auto mb-4 h-1 w-10 shrink-0 rounded-full bg-gray-200" />
+
+            <div className="mb-5 flex shrink-0 items-center justify-between">
+              <h3 className="text-lg font-bold">프로필 이미지 선택</h3>
+              <button onClick={() => setShowImagePicker(false)}>
+                <X size={22} className="text-gray-400" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-5 gap-3 overflow-y-auto pb-8">
+              {PROFILE_IMAGES.map((key) => {
+                const isSelected = currentImage === key;
+                return (
+                  <button
+                    key={key}
+                    onClick={() => handleSelectImage(key)}
+                    className="relative flex items-center justify-center"
+                  >
+                    <div
+                      className={`flex aspect-square w-full items-center justify-center rounded-full transition ${
+                        isSelected
+                          ? 'ring-2 ring-primary bg-primary/10'
+                          : 'ring-1 ring-primary/20 bg-gray-50'
+                      }`}
+                    >
+                      <img
+                        src={`/assets/bear_profile/${key}.png`}
+                        alt={key}
+                        className="w-3/5 aspect-square object-contain"
+                      />
+                    </div>
+                    {isSelected && (
+                      <div className="absolute -top-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary ring-2 ring-white">
+                        <Check size={12} className="text-white" />
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       <BottomNav />
     </div>

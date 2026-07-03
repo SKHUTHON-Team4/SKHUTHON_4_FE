@@ -17,12 +17,14 @@ export default function DiaryCard({ diary }) {
       .then((res) => {
         if (mounted) setIsEmpathized(res.data?.isEmpathized ?? false);
       })
-      .catch(() => {});
+      .catch(() => { });
 
     return () => {
       mounted = false;
     };
   }, [diary.id]);
+
+  const profileImage = diary.profileImage || 'bear_01';
 
   return (
     <div
@@ -30,8 +32,12 @@ export default function DiaryCard({ diary }) {
       className="mb-3 cursor-pointer rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-100 active:opacity-80"
     >
       <div className="mb-3 flex items-center gap-3">
-        <div className="flex h-9 w-9 rounded-full bg-primary-light items-center justify-center text-sm font-bold text-primary">
-          {diary.nickname?.[0]}
+        <div className="w-9 h-9 rounded-full ring-1 ring-primary/20 bg-gray-50 flex items-center justify-center shrink-0">
+          <img
+            src={`/assets/bear_profile/${profileImage}.png`}
+            alt="프로필"
+            className="w-7 h-7 object-contain"
+          />
         </div>
         <div className="flex-1">
           <p className="text-sm font-bold text-gray-950">{diary.nickname}</p>

@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell } from 'lucide-react';
+import { Bell, X } from 'lucide-react';
 import { getTodayMood } from '../api';
 import { EMOTION_IMAGE } from '../utils/emotion';
+import { listenToForegroundMessages } from '../firebase';
 import BottomNav from '../components/common/BottomNav';
 
 export default function Home() {
   const navigate = useNavigate();
   const [mood, setMood] = useState(null);
+  const [pushToast, setPushToast] = useState(null);
+  const [toastLeaving, setToastLeaving] = useState(false);
 
   const fetchMood = () => {
     getTodayMood().then((res) => setMood(res.data)).catch(() => {});
@@ -26,6 +29,28 @@ export default function Home() {
     };
   }, []);
 
+  // 앱이 켜져 있는 동안(포그라운드) 도착한 푸시를 상단 배너로 표시
+  useEffect(() => {
+    let unsubscribe = () => {};
+
+    listenToForegroundMessages((payload) => {
+      const { title, body } = payload.notification || {};
+      setToastLeaving(false);
+      setPushToast({ title: title || '청춘잇다', body: body || '' });
+    }).then((unsub) => {
+      unsubscribe = unsub;
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // 자동으로 사라지지 않고 X 버튼을 눌러야 닫히도록 함. 닫힐 때만 페이드아웃 애니메이션(600ms) 후 완전히 제거.
+  useEffect(() => {
+    if (!toastLeaving) return;
+    const removeTimer = setTimeout(() => setPushToast(null), 600);
+    return () => clearTimeout(removeTimer);
+  }, [toastLeaving]);
+
   const bearImage = mood ? EMOTION_IMAGE[mood.representativeEmotion] : '/assets/bear-normal.png';
 
   return (
@@ -37,6 +62,42 @@ export default function Home() {
         backgroundPosition: 'center top',
       }}
     >
+      {pushToast && (
+        <div
+          className={`${toastLeaving ? '' : 'push-toast-enter'} fixed left-1/2 top-4 z-50 flex w-[92%] max-w-[420px] -translate-x-1/2 items-start gap-2 rounded-2xl bg-white/95 px-4 py-3.5 shadow-[0_12px_30px_rgba(0,0,0,0.18)] ring-1 ring-gray-100 backdrop-blur transition-all duration-500 ease-in ${
+            toastLeaving ? '-translate-y-4 opacity-0' : 'translate-y-0 opacity-100'
+          }`}
+        >
+          <button
+            type="button"
+            onClick={() => {
+              setToastLeaving(true);
+              navigate('/notifications');
+            }}
+            className="flex min-w-0 flex-1 items-start gap-3 text-left"
+          >
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
+              <Bell size={18} className="text-primary" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <p className="truncate text-sm font-bold text-gray-950">{pushToast.title}</p>
+              {pushToast.body && (
+                <p className="mt-0.5 line-clamp-2 text-xs text-gray-500">{pushToast.body}</p>
+              )}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setToastLeaving(true)}
+            aria-label="알림 닫기"
+            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-gray-400 active:bg-gray-100"
+          >
+            <X size={15} />
+          </button>
+        </div>
+      )}
+
       <div className="mx-auto flex w-full max-w-[1180px] min-h-0 flex-1 flex-col px-6 pb-20 pt-8 sm:pb-20 sm:pt-12">
         {/* 헤더 */}
         <header className="flex items-start justify-between">

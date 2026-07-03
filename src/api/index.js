@@ -75,6 +75,7 @@ export const updateNickname = (nickname) => api.patch('/api/members/me/nickname'
 export const updateAge = (age) => api.patch('/api/members/me/age', { age });
 export const toggleNotification = () => api.patch('/api/members/me/notification');
 export const getProfile = () => api.get('/api/members/me/profile');
+export const updateProfileImage = (profileImage) => api.patch('/api/members/me/profile-image', { profileImage });
 export const updateFcmToken = (fcmToken) => api.patch('/api/members/me/fcm-token', { fcmToken });
 
 // ── Diary ─────────────────────────────────────────

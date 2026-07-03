@@ -24,3 +24,12 @@ body { margin: 0; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif
   width: 40%;
   animation: recommendRefreshProgress 1.1s ease-in-out infinite;
 }
+
+@keyframes pushToastEnter {
+  from { opacity: 0; transform: translate(-50%, -16px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.push-toast-enter {
+  animation: pushToastEnter 0.25s ease-out;
+}

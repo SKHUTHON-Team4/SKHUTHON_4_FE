@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getMessaging, getToken, isSupported } from 'firebase/messaging';
+import { getMessaging, getToken, isSupported, onMessage } from 'firebase/messaging';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAKrgZEk_cwpTuwHaJM_lpFSbVQeXYU9Ko',
@@ -50,4 +50,21 @@ export async function getFcmTokenSilently() {
     return null;
   }
   return getFcmToken();
+}
+
+// 앱이 포그라운드(화면이 열려있는 상태)일 때 도착한 푸시를 콜백으로 전달.
+// 브라우저는 포그라운드 푸시를 자동으로 띄워주지 않으므로 화면에서 직접 배너를 그려야 한다.
+// 반환된 함수를 호출하면 리스너가 해제된다.
+export async function listenToForegroundMessages(callback) {
+  if (typeof window === 'undefined' || !('Notification' in window)) return () => {};
+
+  try {
+    if (!(await isSupported())) return () => {};
+
+    const messaging = getMessaging(getFirebaseApp());
+    return onMessage(messaging, callback);
+  } catch (err) {
+    console.error('포그라운드 알림 리스너 등록 실패', err);
+    return () => {};
+  }
 }
