@@ -183,7 +183,7 @@ export default function Feed() {
 
   return (
     <div
-      className="min-h-screen bg-gray-50 pb-24 page-enter"
+      className="min-h-screen overscroll-y-contain bg-gray-50 pb-24 page-enter"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}

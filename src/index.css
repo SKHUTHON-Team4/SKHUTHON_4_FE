@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 * { box-sizing: border-box; }
+html, body { overscroll-behavior-y: contain; }
 body { margin: 0; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; background: #f9f9f9; }
 
 @keyframes fadeIn {
