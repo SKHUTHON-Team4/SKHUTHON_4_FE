@@ -44,14 +44,6 @@ export async function getFcmToken() {
   }
 }
 
-// 이미 권한이 허용된 상태에서만 조용히 토큰을 재발급 (재요청 팝업 없음).
-export async function getFcmTokenSilently() {
-  if (typeof window === 'undefined' || !('Notification' in window) || Notification.permission !== 'granted') {
-    return null;
-  }
-  return getFcmToken();
-}
-
 // 앱이 포그라운드(화면이 열려있는 상태)일 때 도착한 푸시를 콜백으로 전달.
 // 브라우저는 포그라운드 푸시를 자동으로 띄워주지 않으므로 화면에서 직접 배너를 그려야 한다.
 // 반환된 함수를 호출하면 리스너가 해제된다.

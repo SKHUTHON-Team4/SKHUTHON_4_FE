@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import useAuthStore from './store/authStore';
 import { getMe, updateFcmToken } from './api';
-import { getFcmTokenSilently } from './firebase';
+import { getFcmToken } from './firebase';
 
 import Login from './pages/Login';
 import OAuthCallback from './pages/OAuthCallback';
@@ -41,7 +41,9 @@ export default function App() {
         })
         .catch(() => {});
 
-      getFcmTokenSilently()
+      // 리콜 알람 등 백엔드 발송 알림을 받으려면 토큰이 저장돼 있어야 하므로,
+      // 로그인 시 권한을 적극적으로 요청한다 (이미 허용/거부된 사용자에게는 브라우저가 재요청 팝업을 띄우지 않음).
+      getFcmToken()
         .then((token) => {
           if (token) updateFcmToken(token).catch(() => {});
         })
