@@ -124,12 +124,20 @@ export default function Feed() {
   };
 
   const startPull = (clientY) => {
-    if (!canPullToRefresh || window.scrollY > 0 || isRefreshingRecommend) return;
+    if (!canPullToRefresh || isRefreshingRecommend) return;
     pullStartY.current = clientY;
   };
 
   const movePull = (clientY) => {
-    if (pullStartY.current == null || !canPullToRefresh || window.scrollY > 0) return;
+    if (pullStartY.current == null || !canPullToRefresh) return;
+
+    // 스크롤 관성이 아직 완전히 멈추지 않아 scrollY가 0으로 안정되기 전이면
+    // 같은 터치를 유지한 채로도(별도 터치 없이) 당김을 누적하지 않고 대기한다.
+    if (window.scrollY > 0) {
+      pullDistanceRef.current = 0;
+      setPullDistance(0);
+      return;
+    }
 
     const distance = clientY - pullStartY.current;
     const nextPullDistance = distance <= 0 ? 0 : Math.min(distance * 0.55, 82);
