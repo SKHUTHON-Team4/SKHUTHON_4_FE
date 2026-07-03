@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RefreshCw, Search, Sparkles, X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { getFeed, getHotFeed, getRecommendFeed, searchDiaries } from '../api';
 import DiaryCard from '../components/diary/DiaryCard';
 import BottomNav from '../components/common/BottomNav';
 
 const TABS = ['최신', '추천', '핫'];
 const RECOMMEND_REFRESH_MIN_MS = 1200;
+const PULL_READY_DISTANCE = 40;
 
 export default function Feed() {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ export default function Feed() {
   const [isRefreshingRecommend, setIsRefreshingRecommend] = useState(false);
   const pullStartY = useRef(null);
   const isMousePulling = useRef(false);
+  const pullDistanceRef = useRef(0);
 
   const canPullToRefresh = tab === 1 && !isSearching;
 
@@ -86,6 +88,7 @@ export default function Feed() {
   }, [keyword, isSearching, fetchSelectedFeed]);
 
   useEffect(() => {
+    pullDistanceRef.current = 0;
     setPullDistance(0);
     pullStartY.current = null;
   }, [tab, isSearching]);
@@ -115,6 +118,7 @@ export default function Feed() {
       // Keep the current list if refresh fails.
     } finally {
       setIsRefreshingRecommend(false);
+      pullDistanceRef.current = 0;
       setPullDistance(0);
     }
   };
@@ -128,22 +132,20 @@ export default function Feed() {
     if (pullStartY.current == null || !canPullToRefresh || window.scrollY > 0) return;
 
     const distance = clientY - pullStartY.current;
+    const nextPullDistance = distance <= 0 ? 0 : Math.min(distance * 0.55, 82);
 
-    if (distance <= 0) {
-      setPullDistance(0);
-      return;
-    }
-
-    setPullDistance(Math.min(distance * 0.55, 82));
+    pullDistanceRef.current = nextPullDistance;
+    setPullDistance(nextPullDistance);
   };
 
   const endPull = () => {
-    if (pullDistance >= 60) {
+    if (pullDistanceRef.current >= PULL_READY_DISTANCE) {
       refreshRecommendFeed();
     } else {
       setPullDistance(0);
     }
 
+    pullDistanceRef.current = 0;
     pullStartY.current = null;
   };
 
@@ -168,8 +170,8 @@ export default function Feed() {
     endPull();
   };
 
-  const showRecommendRefresh = canPullToRefresh && (pullDistance > 0 || isRefreshingRecommend);
-  const isReadyToRefresh = pullDistance >= 60;
+  const isReadyToRefresh = pullDistance >= PULL_READY_DISTANCE;
+  const showRecommendRefresh = canPullToRefresh && (isReadyToRefresh || isRefreshingRecommend);
 
   return (
     <div
@@ -268,23 +270,13 @@ export default function Feed() {
       >
         {showRecommendRefresh && (
           <div className="mb-4 flex min-h-[360px] flex-col items-center justify-center px-5 py-8 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary-light text-primary">
-              {isRefreshingRecommend ? (
-                <RefreshCw size={26} className="animate-spin" />
-              ) : (
-                <Sparkles size={27} />
-              )}
-            </div>
-
-            <p className="mt-4 text-base font-extrabold text-gray-900">
+            <p className="text-base font-extrabold text-gray-900">
               추천 일기 가져오는 중입니다
             </p>
             <p className="mt-1 text-sm text-gray-400">
               {isRefreshingRecommend
                 ? '내 감정 흐름과 어울리는 일기를 다시 분석하고 있어요'
-                : isReadyToRefresh
-                  ? '손을 놓으면 추천 일기를 새로 가져와요'
-                  : '조금 더 아래로 당기면 추천을 새로고침해요'}
+                : '손을 놓으면 추천 일기를 새로 가져와요'}
             </p>
 
             <div className="mx-auto mt-5 h-1.5 w-full max-w-[260px] overflow-hidden rounded-full bg-gray-100">

@@ -75,6 +75,7 @@ export const updateNickname = (nickname) => api.patch('/api/members/me/nickname'
 export const updateAge = (age) => api.patch('/api/members/me/age', { age });
 export const toggleNotification = () => api.patch('/api/members/me/notification');
 export const getProfile = () => api.get('/api/members/me/profile');
+export const updateFcmToken = (fcmToken) => api.patch('/api/members/me/fcm-token', { fcmToken });
 
 // ── Diary ─────────────────────────────────────────
 export const createDiary = (body) => api.post('/api/diaries', body);
@@ -117,3 +118,7 @@ export const getUnreadCount = () => api.get('/api/notifications/unread-count');
 export const readAllNotifications = () => api.patch('/api/notifications/read-all');
 export const toggleNightNotification = () => api.patch('/api/members/me/notification/night');
 export const toggleMorningNotification = () => api.patch('/api/members/me/notification/morning');
+export const toggleNightEmailNotification = () => api.patch('/api/members/me/notification/night/email');
+export const toggleNightPushNotification = () => api.patch('/api/members/me/notification/night/push');
+export const toggleMorningEmailNotification = () => api.patch('/api/members/me/notification/morning/email');
+export const toggleMorningPushNotification = () => api.patch('/api/members/me/notification/morning/push');

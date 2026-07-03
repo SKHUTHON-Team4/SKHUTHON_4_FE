@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import useAuthStore from './store/authStore';
-import { getMe } from './api';
+import { getMe, updateFcmToken } from './api';
+import { getFcmTokenSilently } from './firebase';
 
 import Login from './pages/Login';
 import OAuthCallback from './pages/OAuthCallback';
@@ -14,6 +15,7 @@ import MyDiary from './pages/MyDiary';
 import MyDiaryAll from './pages/MyDiaryAll';
 import Profile from './pages/Profile';
 import Notifications from './pages/Notifications';
+import NotificationSettings from './pages/NotificationSettings';
 import Bookmarks from './pages/Bookmarks';
 
 function PrivateRoute({ children }) {
@@ -38,6 +40,12 @@ export default function App() {
           }
         })
         .catch(() => {});
+
+      getFcmTokenSilently()
+        .then((token) => {
+          if (token) updateFcmToken(token).catch(() => {});
+        })
+        .catch(() => {});
     }
   }, []);
 
@@ -59,6 +67,7 @@ export default function App() {
           <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
           <Route path="/bookmarks" element={<PrivateRoute><Bookmarks /></PrivateRoute>} />
           <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
+          <Route path="/notification-settings" element={<PrivateRoute><NotificationSettings /></PrivateRoute>} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>

@@ -1,13 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check, Pencil, X } from 'lucide-react';
-import {
-  getProfile,
-  toggleNightNotification,
-  toggleMorningNotification,
-  logout,
-  updateNickname,
-} from '../api';
+import { getProfile, logout, updateNickname } from '../api';
 import useAuthStore from '../store/authStore';
 import BottomNav from '../components/common/BottomNav';
 
@@ -33,24 +27,6 @@ export default function Profile() {
       document.body.style.overflow = '';
     };
   }, []);
-
-  const handleNightNotification = async () => {
-    await toggleNightNotification().catch(() => {});
-
-    setProfile((prev) => ({
-      ...prev,
-      notificationNight: !prev.notificationNight,
-    }));
-  };
-
-  const handleMorningNotification = async () => {
-    await toggleMorningNotification().catch(() => {});
-
-    setProfile((prev) => ({
-      ...prev,
-      notificationMorning: !prev.notificationMorning,
-    }));
-  };
 
   const handleEditNickname = () => {
     setNicknameInput(profile.nickname || '');
@@ -242,55 +218,20 @@ export default function Profile() {
             <span className="text-lg text-gray-300">›</span>
           </button>
 
-          <div className="flex items-center justify-between border-b border-gray-100 py-4">
+          <button
+            type="button"
+            onClick={() => navigate('/notification-settings')}
+            className="flex w-full items-center justify-between border-b border-gray-100 py-4 text-left transition active:bg-gray-50"
+          >
             <div>
-              <p className="text-sm font-bold text-gray-950">밤 10시 알림</p>
+              <p className="text-sm font-bold text-gray-950">알림 설정</p>
               <p className="mt-0.5 text-xs text-gray-400">
-                오늘 일기를 안 쓰면 알려드려요
+                밤/아침 알림을 관리해요
               </p>
             </div>
 
-            <button
-              type="button"
-              onClick={handleNightNotification}
-              className={`relative h-6 w-12 rounded-full transition-colors ${
-                profile.notificationNight ? 'bg-primary' : 'bg-gray-200'
-              }`}
-              aria-label="밤 10시 알림 설정"
-            >
-              <span
-                className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
-                  profile.notificationNight ? 'translate-x-6' : 'translate-x-0'
-                }`}
-              />
-            </button>
-          </div>
-
-          <div className="flex items-center justify-between border-b border-gray-100 py-4">
-            <div>
-              <p className="text-sm font-bold text-gray-950">
-                아침 8시 30분 알림
-              </p>
-              <p className="mt-0.5 text-xs text-gray-400">
-                하루를 기록으로 시작해요
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleMorningNotification}
-              className={`relative h-6 w-12 rounded-full transition-colors ${
-                profile.notificationMorning ? 'bg-primary' : 'bg-gray-200'
-              }`}
-              aria-label="아침 8시 30분 알림 설정"
-            >
-              <span
-                className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
-                  profile.notificationMorning ? 'translate-x-6' : 'translate-x-0'
-                }`}
-              />
-            </button>
-          </div>
+            <span className="text-lg text-gray-300">›</span>
+          </button>
 
           <div className="border-b border-gray-100 py-4">
             <p className="text-xs text-gray-400">이메일 주소</p>
