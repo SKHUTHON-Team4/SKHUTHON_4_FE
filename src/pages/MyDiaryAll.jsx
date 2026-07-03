@@ -31,6 +31,26 @@ function normalizeDiaries(diaries) {
     .sort((a, b) => new Date(b.diaryDate) - new Date(a.diaryDate));
 }
 
+function getMonthLabel(date) {
+  const [year, month] = date.split('-');
+  return `${year}년 ${Number(month)}월`;
+}
+
+function groupDiariesByMonth(diaries) {
+  return diaries.reduce((groups, diary) => {
+    const label = getMonthLabel(diary.diaryDate);
+    const lastGroup = groups[groups.length - 1];
+
+    if (lastGroup?.label === label) {
+      lastGroup.diaries.push(diary);
+      return groups;
+    }
+
+    groups.push({ label, diaries: [diary] });
+    return groups;
+  }, []);
+}
+
 export default function MyDiaryAll() {
   const navigate = useNavigate();
   const [diaries, setDiaries] = useState([]);
@@ -63,6 +83,7 @@ export default function MyDiaryAll() {
   useEffect(() => { load(); }, [tab]);
 
   const filtered = tab === 'public' ? diaries.filter((d) => d.isPublic) : diaries;
+  const diaryGroups = groupDiariesByMonth(filtered);
 
   const handleDelete = async (id) => {
     if (!confirm('정말 삭제할까요?')) return;
@@ -101,53 +122,68 @@ export default function MyDiaryAll() {
       </header>
 
       {/* List */}
-      <div className="mx-auto w-full max-w-[1180px] space-y-3 px-5 pt-5 sm:px-6">
+      <div className="mx-auto w-full max-w-[1180px] space-y-6 px-5 pt-5 sm:px-6">
         {loading ? (
           <p className="py-10 text-center text-sm text-gray-400">불러오는 중...</p>
         ) : filtered.length === 0 ? (
           <p className="py-10 text-center text-sm text-gray-400">일기가 없어요</p>
         ) : (
-          filtered.map((d) => (
-            <div key={d.id} className="relative flex items-center gap-3 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-100">
-              <div
-                onClick={() => navigate(`/diary/${d.id}`)}
-                className="flex flex-1 cursor-pointer items-center gap-3"
-              >
-                {d.emotion != null && (
-                  <img src={EMOTION_IMAGE[d.emotion]} alt="" className="h-10 w-10 object-contain" />
-                )}
-                <div>
-                  <p className="text-sm font-bold text-gray-950">{d.title || d.content.slice(0, 20)}</p>
-                  <p className="mt-0.5 text-xs text-gray-400">
-                    {d.diaryDate} · <span className={d.isPublic ? 'text-primary' : ''}>{d.isPublic ? '공개' : '비공개'}</span>
-                  </p>
-                </div>
+          diaryGroups.map((group) => (
+            <section key={group.label}>
+              <p className="mb-3 text-sm font-extrabold text-gray-500">
+                {group.label}
+              </p>
+
+              <div className="overflow-visible rounded-2xl bg-white shadow-sm ring-1 ring-gray-100">
+                {group.diaries.map((d, index) => (
+                  <div
+                    key={d.id}
+                    className={`relative flex items-center gap-3 p-5 ${
+                      index !== group.diaries.length - 1 ? 'border-b border-gray-100' : ''
+                    }`}
+                  >
+                    <div
+                      onClick={() => navigate(`/diary/${d.id}`)}
+                      className="flex flex-1 cursor-pointer items-center gap-3"
+                    >
+                      {d.emotion != null && (
+                        <img src={EMOTION_IMAGE[d.emotion]} alt="" className="h-10 w-10 object-contain" />
+                      )}
+                      <div>
+                        <p className="text-sm font-bold text-gray-950">{d.title || d.content.slice(0, 20)}</p>
+                        <p className="mt-0.5 text-xs text-gray-400">
+                          {d.diaryDate} · <span className={d.isPublic ? 'text-primary' : ''}>{d.isPublic ? '공개' : '비공개'}</span>
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => setMenuId(menuId === d.id ? null : d.id)}
+                      className="flex h-9 w-9 items-center justify-center rounded-full text-lg text-gray-400 active:bg-gray-50"
+                    >
+                      ⋯
+                    </button>
+
+                    {menuId === d.id && (
+                      <div className="absolute right-4 top-14 z-10 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-lg">
+                        <button
+                          onClick={() => navigate(`/diary/${d.id}/edit`)}
+                          className="block w-24 px-4 py-2.5 text-sm text-left hover:bg-gray-50"
+                        >
+                          수정
+                        </button>
+                        <button
+                          onClick={() => handleDelete(d.id)}
+                          className="block w-24 px-4 py-2.5 text-sm text-left text-red-500 hover:bg-gray-50"
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
-
-              <button
-                onClick={() => setMenuId(menuId === d.id ? null : d.id)}
-                className="flex h-9 w-9 items-center justify-center rounded-full text-lg text-gray-400 active:bg-gray-50"
-              >
-                ⋯
-              </button>
-
-              {menuId === d.id && (
-                <div className="absolute right-4 top-14 z-10 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-lg">
-                  <button
-                    onClick={() => navigate(`/diary/${d.id}/edit`)}
-                    className="block w-24 px-4 py-2.5 text-sm text-left hover:bg-gray-50"
-                  >
-                    수정
-                  </button>
-                  <button
-                    onClick={() => handleDelete(d.id)}
-                    className="block w-24 px-4 py-2.5 text-sm text-left text-red-500 hover:bg-gray-50"
-                  >
-                    삭제
-                  </button>
-                </div>
-              )}
-            </div>
+            </section>
           ))
         )}
       </div>

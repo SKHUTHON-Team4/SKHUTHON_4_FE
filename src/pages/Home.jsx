@@ -50,7 +50,7 @@ export default function Home() {
             className="flex h-10 w-10 items-center justify-center"
             aria-label="알림"
           >
-            <Bell size={28} strokeWidth={2.5} className="text-slate-700" />
+            <Bell size={28} strokeWidth={1.8} className="text-slate-700" />
           </button>
         </header>
 
@@ -74,7 +74,7 @@ export default function Home() {
           }}
         >
           {mood?.ageGroup && (
-            <p className="text-center text-[13px] font-light text-primary mb-1">
+            <p className="text-center text-[13px] font-normal text-[#5F43D9] mb-1">
               {mood.ageGroup}의 오늘 분위기
             </p>
           )}

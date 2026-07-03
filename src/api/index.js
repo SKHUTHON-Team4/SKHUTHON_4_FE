@@ -79,10 +79,17 @@ export const getComments = (diaryId) => api.get(`/api/diaries/${diaryId}/comment
 export const createComment = (diaryId, content) =>
   api.post(`/api/diaries/${diaryId}/comments`, { content });
 export const deleteComment = (commentId) => api.delete(`/api/comments/${commentId}`);
+export const getCommentLike = (commentId) => api.get(`/api/comments/${commentId}/like`);
+export const toggleCommentLike = (commentId) => api.post(`/api/comments/${commentId}/like`);
 
 // ── Empathy ───────────────────────────────────────
 export const getEmpathy = (diaryId) => api.get(`/api/diaries/${diaryId}/empathy`);
 export const toggleEmpathy = (diaryId) => api.post(`/api/diaries/${diaryId}/empathy`);
+
+// ── Bookmark ──────────────────────────────────────
+export const getBookmarks = () => api.get('/api/bookmarks');
+export const getBookmark = (diaryId) => api.get(`/api/bookmarks/${diaryId}`);
+export const toggleBookmark = (diaryId) => api.post(`/api/bookmarks/${diaryId}`);
 
 // ── Report ────────────────────────────────────────
 export const report = (targetId, reportType, reason) =>

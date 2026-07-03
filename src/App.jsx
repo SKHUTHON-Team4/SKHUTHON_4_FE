@@ -14,6 +14,7 @@ import MyDiary from './pages/MyDiary';
 import MyDiaryAll from './pages/MyDiaryAll';
 import Profile from './pages/Profile';
 import Notifications from './pages/Notifications';
+import Bookmarks from './pages/Bookmarks';
 
 function PrivateRoute({ children }) {
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
@@ -45,6 +46,7 @@ export default function App() {
           <Route path="/my" element={<PrivateRoute><MyDiary /></PrivateRoute>} />
           <Route path="/my/all" element={<PrivateRoute><MyDiaryAll /></PrivateRoute>} />
           <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+          <Route path="/bookmarks" element={<PrivateRoute><Bookmarks /></PrivateRoute>} />
           <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

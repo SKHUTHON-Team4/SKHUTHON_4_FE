@@ -220,6 +220,21 @@ export default function Profile() {
 
         {/* 설정 카드 */}
         <section className="mt-4 overflow-hidden rounded-2xl bg-white px-5 shadow-sm ring-1 ring-gray-100">
+          <button
+            type="button"
+            onClick={() => navigate('/bookmarks')}
+            className="flex w-full items-center justify-between border-b border-gray-100 py-4 text-left transition active:bg-gray-50"
+          >
+            <div>
+              <p className="text-sm font-bold text-gray-950">북마크한 일기</p>
+              <p className="mt-0.5 text-xs text-gray-400">
+                저장한 일기를 모아봐요
+              </p>
+            </div>
+
+            <span className="text-lg text-gray-300">›</span>
+          </button>
+
           <div className="flex items-center justify-between border-b border-gray-100 py-4">
             <div>
               <p className="text-sm font-bold text-gray-950">밤 10시 알림</p>

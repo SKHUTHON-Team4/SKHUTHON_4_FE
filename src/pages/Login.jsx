@@ -1,5 +1,14 @@
+import { useEffect } from 'react';
+
 export default function Login() {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
   const handleKakaoLogin = () => {
+
     window.location.href = import.meta.env.DEV
       ? '/oauth2/authorization/kakao'
       : 'https://gksruf.store/oauth2/authorization/kakao';
@@ -17,22 +26,14 @@ export default function Login() {
       <div className="pointer-events-none absolute right-[16%] top-[41%] z-0 h-40 w-44 rounded-full bg-[#D9CBFF]/90 blur-2xl" />
 
       {/* 상단 */}
-      <div className="relative z-10 flex flex-col items-center pt-20 text-center sm:pt-10">
+      <div className="relative z-10 flex flex-col items-center pt-36 text-center sm:pt-28">
         <p className="text-sm font-extrabold text-primary">
           청춘을 잇는 감정 기록
         </p>
 
-        <h1 className="mt-2 text-5xl font-black tracking-tight text-gray-900">
+        <h1 className="mt-4 text-[56px] font-black leading-none text-[#302658] drop-shadow-[0_6px_18px_rgba(124,92,252,0.18)]">
           청춘잇다
         </h1>
-
-        <div className="mt-8 flex items-center justify-center">
-          <img
-            src="/assets/bear-face.png"
-            alt="청춘잇다 캐릭터 얼굴"
-            className="h-52 w-52 object-contain drop-shadow-[0_14px_24px_rgba(124,92,252,0.2)]"
-          />
-        </div>
       </div>
 
       {/* 하단 */}

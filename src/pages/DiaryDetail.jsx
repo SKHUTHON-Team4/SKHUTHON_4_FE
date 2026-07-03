@@ -1,11 +1,16 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { Bookmark, Heart } from "lucide-react";
 import {
   getDiary,
   getComments,
   createComment,
   deleteComment,
+  getBookmark,
+  getCommentLike,
   getEmpathy,
+  toggleBookmark,
+  toggleCommentLike,
   toggleEmpathy,
   report,
 } from "../api";
@@ -23,6 +28,7 @@ export default function DiaryDetail() {
   const [diary, setDiary] = useState(null);
   const [comments, setComments] = useState([]);
   const [empathy, setEmpathy] = useState(null);
+  const [bookmark, setBookmark] = useState(null);
   const [commentText, setCommentText] = useState("");
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [showReport, setShowReport] = useState(false);
@@ -32,9 +38,34 @@ export default function DiaryDetail() {
   const inputRef = useRef(null);
 
   useEffect(() => {
-    getDiary(id).then((r) => setDiary(r.data));
-    getComments(id).then((r) => setComments(r.data));
-    getEmpathy(id).then((r) => setEmpathy(r.data));
+    const load = async () => {
+      const [diaryRes, commentsRes, empathyRes, bookmarkRes] = await Promise.all([
+        getDiary(id),
+        getComments(id),
+        getEmpathy(id),
+        getBookmark(id).catch(() => ({ data: null })),
+      ]);
+
+      const loadedComments = commentsRes.data || [];
+      const commentsWithLikes = await Promise.all(
+        loadedComments.map(async (comment) => {
+          const likeRes = await getCommentLike(comment.id).catch(() => ({ data: null }));
+
+          return {
+            ...comment,
+            isLiked: likeRes.data?.isLiked ?? false,
+            likeCount: likeRes.data?.likeCount ?? comment.likeCount ?? 0,
+          };
+        })
+      );
+
+      setDiary(diaryRes.data);
+      setComments(commentsWithLikes);
+      setEmpathy(empathyRes.data);
+      setBookmark(bookmarkRes.data);
+    };
+
+    load().catch(() => {});
   }, [id]);
 
   useEffect(() => {
@@ -56,6 +87,21 @@ export default function DiaryDetail() {
   }, []);
 
   const handleEmpathy = () => toggleEmpathy(id).then((r) => setEmpathy(r.data));
+  const handleBookmark = () => toggleBookmark(id).then((r) => setBookmark(r.data));
+  const handleCommentLike = (commentId) =>
+    toggleCommentLike(commentId).then((r) =>
+      setComments((prev) =>
+        prev.map((comment) =>
+          comment.id === commentId
+            ? {
+                ...comment,
+                isLiked: r.data.isLiked,
+                likeCount: r.data.likeCount,
+              }
+            : comment
+        )
+      )
+    );
 
   const handleComment = async () => {
     const content = commentText.trim();
@@ -66,7 +112,7 @@ export default function DiaryDetail() {
       setIsSubmittingComment(true);
 
       const res = await createComment(id, content);
-      setComments((prev) => [...prev, res.data]);
+      setComments((prev) => [...prev, { ...res.data, isLiked: false, likeCount: 0 }]);
       setCommentText("");
     } finally {
       setIsSubmittingComment(false);
@@ -122,11 +168,29 @@ export default function DiaryDetail() {
             </svg>
           </button>
 
-          {!isMine && (
-            <button onClick={openDiaryReport} className="text-xs text-gray-400">
-              신고
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            {!isMine && (
+              <button onClick={openDiaryReport} className="text-xs text-gray-400">
+                신고
+              </button>
+            )}
+
+            {bookmark && (
+              <button
+                type="button"
+                onClick={handleBookmark}
+                className={`flex h-9 w-9 items-center justify-center rounded-full transition active:bg-gray-50 ${
+                  bookmark.isBookmarked ? "text-primary" : "text-gray-400"
+                }`}
+                aria-label={bookmark.isBookmarked ? "북마크 취소" : "북마크 추가"}
+              >
+                <Bookmark
+                  size={21}
+                  fill={bookmark.isBookmarked ? "currentColor" : "none"}
+                />
+              </button>
+            )}
+          </div>
         </header>
 
         <div className="px-5">
@@ -160,13 +224,17 @@ export default function DiaryDetail() {
           {empathy && (
             <button
               onClick={handleEmpathy}
-              className={`mt-6 flex items-center gap-2 px-4 py-2 rounded-full border transition-colors ${empathy.isEmpathized
+              className={`mt-6 flex min-w-[58px] items-center justify-center gap-1.5 rounded-full border px-3 py-1.5 transition-colors ${empathy.isEmpathized
                   ? "border-primary text-primary bg-primary-light"
                   : "border-gray-200 text-gray-400"
                 }`}
             >
-              <span>❤️</span>
-              <span className="text-sm">{empathy.empathyCount}</span>
+              <Heart
+                size={17}
+                className="shrink-0 text-[#F04452] drop-shadow-[0_3px_2px_rgba(190,32,52,0.32)]"
+                fill="currentColor"
+              />
+              <span className="min-w-[10px] text-center text-sm">{empathy.empathyCount}</span>
             </button>
           )}
         </div>
@@ -192,14 +260,28 @@ export default function DiaryDetail() {
                   {c.content}
                 </p>
 
-                {user && String(user.id) === String(c.memberId) && (
+                <div className="mt-1 flex items-center gap-3">
                   <button
-                    onClick={() => handleDeleteComment(c.id)}
-                    className="text-xs text-gray-300 mt-1"
+                    type="button"
+                    onClick={() => handleCommentLike(c.id)}
+                    className={`flex items-center gap-1 text-xs transition ${
+                      c.isLiked ? "text-primary" : "text-gray-300"
+                    }`}
+                    aria-label={c.isLiked ? "댓글 좋아요 취소" : "댓글 좋아요"}
                   >
-                    삭제
+                    <Heart size={13} fill={c.isLiked ? "currentColor" : "none"} />
+                    <span>{c.likeCount || 0}</span>
                   </button>
-                )}
+
+                  {user && String(user.id) === String(c.memberId) && (
+                    <button
+                      onClick={() => handleDeleteComment(c.id)}
+                      className="text-xs text-gray-300"
+                    >
+                      삭제
+                    </button>
+                  )}
+                </div>
               </div>
 
               <button
