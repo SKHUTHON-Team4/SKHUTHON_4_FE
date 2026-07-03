@@ -1,11 +1,12 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, X } from 'lucide-react';
+import { RefreshCw, Search, Sparkles, X } from 'lucide-react';
 import { getFeed, getHotFeed, getRecommendFeed, searchDiaries } from '../api';
 import DiaryCard from '../components/diary/DiaryCard';
 import BottomNav from '../components/common/BottomNav';
 
 const TABS = ['최신', '추천', '핫'];
+const RECOMMEND_REFRESH_MIN_MS = 1200;
 
 export default function Feed() {
   const navigate = useNavigate();
@@ -16,6 +17,12 @@ export default function Feed() {
   const [isSearching, setIsSearching] = useState(false);
   const [keyword, setKeyword] = useState('');
   const [emptyMessage, setEmptyMessage] = useState('');
+  const [pullDistance, setPullDistance] = useState(0);
+  const [isRefreshingRecommend, setIsRefreshingRecommend] = useState(false);
+  const pullStartY = useRef(null);
+  const isMousePulling = useRef(false);
+
+  const canPullToRefresh = tab === 1 && !isSearching;
 
   const fetchSelectedFeed = useCallback(async () => {
     setEmptyMessage('');
@@ -78,13 +85,104 @@ export default function Feed() {
     return () => clearTimeout(timer);
   }, [keyword, isSearching, fetchSelectedFeed]);
 
+  useEffect(() => {
+    setPullDistance(0);
+    pullStartY.current = null;
+  }, [tab, isSearching]);
+
   const closeSearch = () => {
     setKeyword('');
     setIsSearching(false);
   };
 
+  const refreshRecommendFeed = async () => {
+    if (isRefreshingRecommend) return;
+
+    try {
+      setIsRefreshingRecommend(true);
+      setEmptyMessage('');
+
+      const [res] = await Promise.all([
+        getRecommendFeed(),
+        new Promise((resolve) => setTimeout(resolve, RECOMMEND_REFRESH_MIN_MS)),
+      ]);
+      const recommendFeed = res.data || {};
+      const nextDiaries = recommendFeed.diaries || [];
+
+      setDiaries(nextDiaries.slice(0, 10));
+      setEmptyMessage(recommendFeed.message || '');
+    } catch {
+      // Keep the current list if refresh fails.
+    } finally {
+      setIsRefreshingRecommend(false);
+      setPullDistance(0);
+    }
+  };
+
+  const startPull = (clientY) => {
+    if (!canPullToRefresh || window.scrollY > 0 || isRefreshingRecommend) return;
+    pullStartY.current = clientY;
+  };
+
+  const movePull = (clientY) => {
+    if (pullStartY.current == null || !canPullToRefresh || window.scrollY > 0) return;
+
+    const distance = clientY - pullStartY.current;
+
+    if (distance <= 0) {
+      setPullDistance(0);
+      return;
+    }
+
+    setPullDistance(Math.min(distance * 0.55, 82));
+  };
+
+  const endPull = () => {
+    if (pullDistance >= 60) {
+      refreshRecommendFeed();
+    } else {
+      setPullDistance(0);
+    }
+
+    pullStartY.current = null;
+  };
+
+  const handleTouchStart = (e) => startPull(e.touches[0].clientY);
+  const handleTouchMove = (e) => movePull(e.touches[0].clientY);
+  const handleTouchEnd = () => endPull();
+
+  const handleMouseDown = (e) => {
+    if (e.button !== 0) return;
+    isMousePulling.current = true;
+    startPull(e.clientY);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isMousePulling.current) return;
+    movePull(e.clientY);
+  };
+
+  const handleMouseUp = () => {
+    if (!isMousePulling.current) return;
+    isMousePulling.current = false;
+    endPull();
+  };
+
+  const showRecommendRefresh = canPullToRefresh && (pullDistance > 0 || isRefreshingRecommend);
+  const isReadyToRefresh = pullDistance >= 60;
+
   return (
-    <div className="min-h-screen bg-gray-50 pb-24 page-enter">
+    <div
+      className="min-h-screen bg-gray-50 pb-24 page-enter"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+    >
       <header className="z-30">
         <div className="mx-auto w-full max-w-[1180px] px-5 pt-10 sm:px-6">
           <div className="flex items-start justify-between gap-3">
@@ -160,18 +258,61 @@ export default function Feed() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-[1180px] px-5 pt-4 sm:px-6">
-        {loading ? (
+      <main
+        className="mx-auto w-full max-w-[1180px] px-5 pt-4 transition-transform sm:px-6"
+        style={{
+          transform: showRecommendRefresh && !isRefreshingRecommend
+            ? `translateY(${Math.min(pullDistance * 0.25, 18)}px)`
+            : 'translateY(0)',
+        }}
+      >
+        {showRecommendRefresh && (
+          <div className="mb-4 flex min-h-[360px] flex-col items-center justify-center px-5 py-8 text-center">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary-light text-primary">
+              {isRefreshingRecommend ? (
+                <RefreshCw size={26} className="animate-spin" />
+              ) : (
+                <Sparkles size={27} />
+              )}
+            </div>
+
+            <p className="mt-4 text-base font-extrabold text-gray-900">
+              추천 일기 가져오는 중입니다
+            </p>
+            <p className="mt-1 text-sm text-gray-400">
+              {isRefreshingRecommend
+                ? '내 감정 흐름과 어울리는 일기를 다시 분석하고 있어요'
+                : isReadyToRefresh
+                  ? '손을 놓으면 추천 일기를 새로 가져와요'
+                  : '조금 더 아래로 당기면 추천을 새로고침해요'}
+            </p>
+
+            <div className="mx-auto mt-5 h-1.5 w-full max-w-[260px] overflow-hidden rounded-full bg-gray-100">
+              <div
+                className={`h-full rounded-full bg-primary ${
+                  isRefreshingRecommend ? 'recommend-refresh-progress' : 'transition-all'
+                }`}
+                style={{
+                  width: isRefreshingRecommend
+                    ? undefined
+                    : `${Math.min(100, (pullDistance / 120) * 100)}%`,
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        {!showRecommendRefresh && loading ? (
           <p className="py-10 text-center text-sm text-gray-400">불러오는 중...</p>
-        ) : diaries.length === 0 ? (
+        ) : !showRecommendRefresh && diaries.length === 0 ? (
           <p className="py-10 text-center text-sm text-gray-400">
             {isSearching && keyword.trim()
-              ? '검색 결과가 없어요.'
-              : emptyMessage || '아직 게시글이 없어요.'}
+              ? '검색 결과가 없어요'
+              : emptyMessage || '아직 게시글이 없어요'}
           </p>
-        ) : (
+        ) : !showRecommendRefresh ? (
           diaries.map((d) => <DiaryCard key={d.id} diary={d} />)
-        )}
+        ) : null}
       </main>
 
       <button

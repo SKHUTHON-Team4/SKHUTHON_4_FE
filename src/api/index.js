@@ -1,6 +1,13 @@
 import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.DEV ? '' : 'https://gksruf.store';
+export const KAKAO_AUTH_URL = 'https://gksruf.store/oauth2/authorization/kakao';
+
+export const redirectToKakaoLogin = () => {
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('token');
+  window.location.href = KAKAO_AUTH_URL;
+};
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -23,14 +30,20 @@ api.interceptors.response.use(
 
       try {
         const expiredToken = localStorage.getItem('accessToken') || localStorage.getItem('token');
-        if (!expiredToken) return Promise.reject(err);
+        if (!expiredToken) {
+          redirectToKakaoLogin();
+          return Promise.reject(err);
+        }
 
         const res = await axios.post(`${API_BASE_URL}/api/auth/refresh`, null, {
           headers: { Authorization: `Bearer ${expiredToken}` },
         });
         const newAccessToken = res.data?.data?.accessToken;
 
-        if (!newAccessToken) return Promise.reject(err);
+        if (!newAccessToken) {
+          redirectToKakaoLogin();
+          return Promise.reject(err);
+        }
 
         localStorage.setItem('accessToken', newAccessToken);
         localStorage.removeItem('token');
@@ -38,10 +51,13 @@ api.interceptors.response.use(
 
         return api.request(originalRequest);
       } catch (refreshErr) {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('token');
+        redirectToKakaoLogin();
         return Promise.reject(refreshErr);
       }
+    }
+
+    if (err.response?.status === 401) {
+      redirectToKakaoLogin();
     }
 
     return Promise.reject(err);

@@ -30,22 +30,22 @@ export default function Home() {
 
   return (
     <div
-      className="h-screen overflow-hidden flex flex-col page-enter"
+      className="flex h-[100dvh] overflow-hidden flex-col page-enter"
       style={{
         backgroundImage: 'url(/assets/background.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center top',
       }}
     >
-      <div className="w-full max-w-[1180px] mx-auto flex flex-col flex-1 px-6 pt-12 pb-24 sm:pb-20">
+      <div className="mx-auto flex w-full max-w-[1180px] min-h-0 flex-1 flex-col px-6 pb-20 pt-8 sm:pb-20 sm:pt-12">
         {/* 헤더 */}
         <header className="flex items-start justify-between">
           <div>
-            <p className="text-[20px] font-extrabold text-slate-800">안녕하세요 👋</p>
-            <h1 className="mt-1 text-[22px] font-extrabold text-slate-900">
+            <p className="text-[18px] font-extrabold text-slate-800 sm:text-[20px]">안녕하세요 👋</p>
+            <h1 className="mt-1 text-[21px] font-extrabold text-slate-900 sm:text-[22px]">
               오늘의 감정을 기록해볼까요?
             </h1>
-            <p className="mt-2 text-[15px] font-bold text-slate-500">
+            <p className="mt-1.5 text-[14px] font-bold text-slate-500 sm:mt-2 sm:text-[15px]">
               {new Date().toLocaleDateString('ko-KR', {
                 year: 'numeric', month: 'numeric', day: 'numeric', weekday: 'short',
               })}
@@ -62,17 +62,17 @@ export default function Home() {
         </header>
 
         {/* 곰돌이 */}
-        <div className="flex justify-center flex-1 items-center">
+        <div className="flex min-h-0 flex-1 items-center justify-center py-2 sm:py-0">
           <img
             src={bearImage}
             alt="bear"
-            className="w-[200px] h-[200px] object-contain"
+            className="h-[168px] w-[168px] object-contain sm:h-[200px] sm:w-[200px]"
           />
         </div>
 
         {/* 글라스 카드 */}
         <div
-          className="w-full max-w-[800px] mx-auto rounded-[28px] px-6 py-3.5 shadow-[0_12px_35px_rgba(80,65,140,0.2)]"
+          className="mx-auto w-full max-w-[800px] rounded-[24px] px-5 py-3.5 shadow-[0_12px_35px_rgba(80,65,140,0.2)] sm:rounded-[28px] sm:px-6"
           style={{
             background: 'rgba(255, 255, 255, 0.25)',
             backdropFilter: 'blur(16px)',
@@ -81,22 +81,22 @@ export default function Home() {
           }}
         >
           {mood?.ageGroup && (
-            <p className="text-center text-[13px] font-normal text-[#5F43D9] mb-1">
+            <p className="mb-1 text-center text-[13px] font-normal text-[#5F43D9]">
               {mood.ageGroup}의 오늘 분위기
             </p>
           )}
 
-          <p className="text-center text-[17px] leading-relaxed font-medium text-slate-900 mb-3">
+          <p className="mb-3 text-center text-[15px] font-medium leading-7 text-slate-900 sm:text-[17px] sm:leading-relaxed">
             {mood?.moodMessage || '오늘의 작은 노력이 큰 변화를 만들어요.'}
           </p>
 
-          <div className="flex justify-between text-[14px] font-extrabold mb-2">
+          <div className="mb-2 flex justify-between text-[13px] font-extrabold sm:text-[14px]">
             <span className="text-[#7C5CFC]">긍정 {mood?.positiveRatio ?? 0}%</span>
             <span className="text-[#FF4B5C]">부정 {mood?.negativeRatio ?? 0}%</span>
           </div>
 
           <div
-            className="flex h-3 w-full overflow-hidden rounded-full mb-3.5"
+            className="mb-3.5 flex h-2.5 w-full overflow-hidden rounded-full sm:h-3"
             style={{ background: 'rgba(255,255,255,0.3)' }}
           >
             <div style={{ width: `${mood?.positiveRatio ?? 0}%`, background: '#7C5CFC' }} />
@@ -106,7 +106,7 @@ export default function Home() {
           {/* 일기 쓰기 버튼 */}
           <button
             onClick={() => navigate('/write')}
-            className="w-full flex items-center justify-between rounded-2xl px-5 py-3"
+            className="flex w-full items-center justify-between rounded-2xl px-5 py-3"
             style={{
               background: 'rgba(255, 255, 255, 0.3)',
               border: '1px solid rgba(255, 255, 255, 0.5)',

@@ -1,30 +1,20 @@
 import { useEffect } from 'react';
+import { KAKAO_AUTH_URL } from '../api';
 
 export default function Login() {
   useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = '';
-    };
+    const accessToken = localStorage.getItem('accessToken') || localStorage.getItem('token');
+
+    if (accessToken) window.location.replace('/home');
+    return undefined;
   }, []);
 
   const handleKakaoLogin = () => {
-    window.location.href = import.meta.env.DEV
-      ? '/oauth2/authorization/kakao'
-      : 'https://gksruf.store/oauth2/authorization/kakao';
+    window.location.href = KAKAO_AUTH_URL;
   };
 
   return (
-    <div
-      className="relative h-screen flex flex-col justify-between overflow-hidden bg-[#FAF8FF] px-8 py-14"
-      style={{
-        backgroundImage: 'url(/assets/background.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center top',
-      }}
-    >
-      <div className="pointer-events-none absolute right-[16%] top-[41%] z-0 h-40 w-44 rounded-full bg-[#D9CBFF]/90 blur-2xl" />
-
+    <div className="relative h-screen flex flex-col justify-between overflow-hidden bg-[#FAF8FF] px-8 py-14">
       {/* 상단 */}
       <div className="relative z-10 flex flex-col items-center pt-20 text-center sm:pt-10">
         <p className="text-sm font-extrabold text-primary">

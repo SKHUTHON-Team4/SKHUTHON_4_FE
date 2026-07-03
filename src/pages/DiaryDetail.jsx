@@ -224,22 +224,20 @@ export default function DiaryDetail() {
           {empathy && (
             <button
               onClick={handleEmpathy}
-              className={`mt-6 flex min-w-[58px] items-center justify-center gap-1.5 rounded-full border px-3 py-1.5 transition-colors ${empathy.isEmpathized
-                  ? "border-primary text-primary bg-primary-light"
-                  : "border-gray-200 text-gray-400"
-                }`}
+              className="mt-6 flex items-center gap-1.5 text-sm font-semibold transition"
             >
               <Heart
-                size={17}
-                className="shrink-0 text-[#F04452] drop-shadow-[0_3px_2px_rgba(190,32,52,0.32)]"
-                fill="currentColor"
+                size={18}
+                fill={empathy.isEmpathized ? "currentColor" : "none"}
+                className={empathy.isEmpathized ? "text-red-500" : "text-red-400"}
+                strokeWidth={2}
               />
-              <span className="min-w-[10px] text-center text-sm">{empathy.empathyCount}</span>
+              <span className="text-gray-400">{empathy.empathyCount}</span>
             </button>
           )}
         </div>
 
-        <div className="mt-6 px-5">
+        <div className="mt-6 border-t border-gray-100 px-5 pt-5">
           <p className="font-semibold text-sm mb-3">댓글 {comments.length}</p>
 
           {comments.map((c) => (

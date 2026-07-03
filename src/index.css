@@ -13,3 +13,12 @@ body { margin: 0; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif
 .page-enter {
   animation: fadeIn 0.2s ease-out;
 }
+
+@keyframes recommendRefreshProgress {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+.recommend-refresh-progress {
+  animation: recommendRefreshProgress 1.2s linear forwards;
+}

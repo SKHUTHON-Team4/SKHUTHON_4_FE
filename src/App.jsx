@@ -18,7 +18,8 @@ import Bookmarks from './pages/Bookmarks';
 
 function PrivateRoute({ children }) {
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
-  return isLoggedIn ? children : <Navigate to="/" replace />;
+
+  return isLoggedIn ? children : <Navigate to="/login" replace />;
 }
 
 export default function App() {
@@ -26,8 +27,17 @@ export default function App() {
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken') || localStorage.getItem('token');
+
     if (accessToken) {
-      getMe().then((res) => setUser(res.data)).catch(() => {});
+      getMe()
+        .then((res) => {
+          setUser(res.data);
+
+          if (res.data?.age == null && window.location.pathname !== '/onboarding') {
+            window.location.replace('/onboarding');
+          }
+        })
+        .catch(() => {});
     }
   }, []);
 
@@ -36,6 +46,7 @@ export default function App() {
       <div className="min-h-screen w-full">
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/oauth/callback" element={<OAuthCallback />} />
           <Route path="/onboarding" element={<PrivateRoute><Onboarding /></PrivateRoute>} />
           <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
@@ -48,7 +59,7 @@ export default function App() {
           <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
           <Route path="/bookmarks" element={<PrivateRoute><Bookmarks /></PrivateRoute>} />
           <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>
     </BrowserRouter>

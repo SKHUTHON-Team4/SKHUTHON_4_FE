@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { updateNickname, updateAge } from '../api';
+import { getMe, updateNickname, updateAge } from '../api';
 import useAuthStore from '../store/authStore';
 
 export default function Onboarding() {
@@ -9,6 +9,15 @@ export default function Onboarding() {
   const [nickname, setNickname] = useState('');
   const [age, setAge] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    getMe()
+      .then((res) => {
+        setUser(res.data);
+        setNickname(res.data?.nickname || '');
+      })
+      .catch(() => {});
+  }, []);
 
   const handleSubmit = async () => {
     if (!nickname.trim() || !age) return setError('닉네임과 나이를 모두 입력해주세요.');
