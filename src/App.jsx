@@ -17,6 +17,7 @@ import Profile from './pages/Profile';
 import Notifications from './pages/Notifications';
 import NotificationSettings from './pages/NotificationSettings';
 import Bookmarks from './pages/Bookmarks';
+import { needsOnboarding } from './utils/member';
 
 function PrivateRoute({ children }) {
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
@@ -29,13 +30,18 @@ export default function App() {
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken') || localStorage.getItem('token');
+    const publicPaths = ['/', '/login', '/oauth/callback'];
 
     if (accessToken) {
       getMe()
         .then((res) => {
           setUser(res.data);
 
-          if (res.data?.age == null && window.location.pathname !== '/onboarding') {
+          if (
+            needsOnboarding(res.data) &&
+            !publicPaths.includes(window.location.pathname) &&
+            window.location.pathname !== '/onboarding'
+          ) {
             window.location.replace('/onboarding');
           }
         })

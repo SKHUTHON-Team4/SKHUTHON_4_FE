@@ -13,6 +13,23 @@ const emotions = [
   { value: 0, label: '매우 별로', img: '/assets/bear-very-bad.png' },
 ];
 
+function getKoreaDateString() {
+  const parts = new Intl.DateTimeFormat('ko-KR', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date());
+
+  const date = Object.fromEntries(
+    parts
+      .filter((part) => ['year', 'month', 'day'].includes(part.type))
+      .map((part) => [part.type, part.value])
+  );
+
+  return `${date.year}-${date.month}-${date.day}`;
+}
+
 export default function Write() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -60,7 +77,12 @@ export default function Write() {
         await updateEmotion(id, selectedEmotion);
         navigate('/my');
       } else {
-        const res = await createDiary({ title, content, isPublic });
+        const res = await createDiary({
+          title,
+          content,
+          isPublic,
+          diaryDate: getKoreaDateString(),
+        });
         const diaryId = res.data.id;
         setCreatedId(diaryId);
         await updateEmotion(diaryId, selectedEmotion);

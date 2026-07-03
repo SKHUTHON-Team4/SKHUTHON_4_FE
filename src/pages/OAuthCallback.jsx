@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getMe } from '../api';
 import useAuthStore from '../store/authStore';
+import { needsOnboarding } from '../utils/member';
 
 export default function OAuthCallback() {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ export default function OAuthCallback() {
     login(accessToken);
     getMe().then((res) => {
       setUser(res.data);
-      navigate(res.data?.age == null ? '/onboarding' : '/home');
+      navigate(needsOnboarding(res.data) ? '/onboarding' : '/home');
     }).catch(() => navigate('/'));
   }, []);
 

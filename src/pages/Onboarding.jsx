@@ -36,43 +36,64 @@ export default function Onboarding() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white px-6">
-      <h2 className="text-xl font-bold mb-1">청춘잇다에 오신 것을 환영합니다!</h2>
-      <p className="text-gray-400 text-sm mb-8">간단한 정보를 입력하고 나만의 공간을 시작해보세요.</p>
+    <div className="relative min-h-screen overflow-hidden bg-[#FAF8FF] px-8 py-12">
+      <div className="flex min-h-[calc(100vh-6rem)] flex-col items-center justify-center">
+        <div className="flex flex-col items-center text-center">
+          <p className="text-sm font-extrabold text-primary">
+            청춘잇다 시작하기
+          </p>
 
-      <div className="w-full max-w-xs space-y-4">
-        <div>
-          <label className="text-sm font-medium text-gray-700">닉네임</label>
-          <input
-            className="mt-1 w-full border border-gray-200 rounded-lg px-4 py-3 text-sm outline-none focus:border-primary"
-            placeholder="닉네임을 입력하세요"
-            maxLength={10}
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-          />
-          <span className="text-xs text-gray-400 float-right">{nickname.length}/10</span>
+          <h2 className="mt-4 text-[34px] font-black leading-tight text-[#302658] drop-shadow-[0_6px_18px_rgba(124,92,252,0.12)]">
+            프로필을 완성해주세요
+          </h2>
+
+          <p className="mt-4 text-sm leading-6 text-gray-500">
+            닉네임과 나이를 알려주면
+            <br />
+            나에게 맞는 감정 기록을 시작할 수 있어요.
+          </p>
         </div>
 
-        <div>
-          <label className="text-sm font-medium text-gray-700">나이</label>
-          <input
-            type="number"
-            className="mt-1 w-full border border-gray-200 rounded-lg px-4 py-3 text-sm outline-none focus:border-primary"
-            placeholder="나이를 입력하세요"
-            min={1} max={100}
-            value={age}
-            onChange={(e) => setAge(e.target.value)}
-          />
+        <div className="mt-10 w-full max-w-[360px] space-y-5">
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <label className="text-sm font-bold text-[#302658]">닉네임</label>
+              <span className="text-xs font-medium text-gray-400">{nickname.length}/10</span>
+            </div>
+            <input
+              className="h-14 w-full rounded-2xl border border-[#E9E0FF] bg-white px-5 text-[15px] font-medium text-[#302658] shadow-sm outline-none transition placeholder:text-gray-300 focus:border-primary focus:ring-4 focus:ring-primary/10"
+              placeholder="닉네임을 입력하세요"
+              maxLength={10}
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-bold text-[#302658]">나이</label>
+            <input
+              type="number"
+              className="h-14 w-full rounded-2xl border border-[#E9E0FF] bg-white px-5 text-[15px] font-medium text-[#302658] shadow-sm outline-none transition placeholder:text-gray-300 focus:border-primary focus:ring-4 focus:ring-primary/10"
+              placeholder="나이를 입력하세요"
+              min={1} max={100}
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+            />
+          </div>
+
+          {error && (
+            <p className="rounded-2xl bg-white/80 px-4 py-3 text-center text-xs font-medium text-red-500 shadow-sm">
+              {error}
+            </p>
+          )}
+
+          <button
+            onClick={handleSubmit}
+            className="h-14 w-full rounded-2xl bg-primary text-[17px] font-bold text-white shadow-[0_12px_24px_rgba(124,92,252,0.22)] transition hover:brightness-95"
+          >
+            시작하기
+          </button>
         </div>
-
-        {error && <p className="text-red-500 text-xs">{error}</p>}
-
-        <button
-          onClick={handleSubmit}
-          className="w-full bg-primary text-white font-semibold py-3 rounded-xl"
-        >
-          시작하기
-        </button>
       </div>
     </div>
   );

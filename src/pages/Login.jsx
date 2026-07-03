@@ -1,16 +1,8 @@
-import { useEffect } from 'react';
-import { KAKAO_AUTH_URL } from '../api';
+import { redirectToKakaoLogin } from '../api';
 
 export default function Login() {
-  useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken') || localStorage.getItem('token');
-
-    if (accessToken) window.location.replace('/home');
-    return undefined;
-  }, []);
-
   const handleKakaoLogin = () => {
-    window.location.href = KAKAO_AUTH_URL;
+    redirectToKakaoLogin();
   };
 
   return (
